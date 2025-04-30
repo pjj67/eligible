@@ -113,6 +113,7 @@ app.post("/revoke-need", (req, res) => {
   res.redirect("/");
 });
 
+// --- Attendance Update ---
 app.post("/update-attendance", (req, res) => {
   console.log("Attendance submission:", JSON.stringify(req.body, null, 2));
 
@@ -127,7 +128,6 @@ app.post("/update-attendance", (req, res) => {
     const newAttendance = [];
 
     for (let i = 0; i < 8; i++) {
-      // Set to 'true' or 'false' based on the data sent by the form
       const val = attendanceData[i] === "true"; // Ensure we correctly interpret 'true' and 'false'
       newAttendance[i] = val;
     }
