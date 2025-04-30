@@ -1,79 +1,127 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Member Tracker</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-  <h1>Eligibility Checker</h1>
-  <form id="eligibility-form">
-    <select name="category" id="elig-cat">
-      <% Object.keys(categories).forEach(c => { %>
-        <option value="<%= c %>"><%= c %></option>
-      <% }) %>
-    </select>
-    <select name="item" id="elig-item"></select>
-    <button type="submit">Check</button>
-  </form>
-  <div id="eligible-results"></div>
+const express = require("express");
+const app = express();
+const path = require("path");
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
 
-  <h2>Members</h2>
-  <form action="/add-member" method="POST">
-    <input name="name" required placeholder="New Member Name" />
-    <button type="submit">Add</button>
-  </form>
+const file = path.join(__dirname, "db.json");
+const adapter = new FileSync(file);
+const db = low(adapter);
 
-  <% members.forEach(m => { %>
-    <form action="/remove-member" method="POST" style="display:inline;">
-      <input type="hidden" name="name" value="<%= m.name %>" />
-      <button type="submit">❌</button>
-    </form>
-    <strong><%= m.name %></strong>
-    <form method="POST" action="/update-attendance">
-      <input type="hidden" name="<%= m.name %>" />
-      <% m.attendance.forEach((a, i) => { %>
-        <input type="checkbox" name="<%= m.name %>[]"
-               value="true" <%= a ? "checked" : "" %> />
-      <% }) %>
-      <button type="submit">Update</button>
-    </form>
-    <ul>
-      <% Object.entries(m.items || {}).forEach(([cat, items]) => { %>
-        <li><strong><%= cat %>:</strong> <%= items.join(", ") %></li>
-      <% }) %>
-    </ul>
-  <% }) %>
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-  <h2>Categories & Items</h2>
-  <form action="/add-category" method="POST">
-    <input name="category" required placeholder="New Category" />
-    <button>Add</button>
-  </form>
-  <% Object.entries(categories).forEach(([cat, items]) => { %>
-    <h3><%= cat %>
-      <form action="/remove-category" method="POST" style="display:inline;">
-        <input type="hidden" name="category" value="<%= cat %>" />
-        <button>❌</button>
-      </form>
-    </h3>
-    <form action="/add-item" method="POST">
-      <input name="item" required placeholder="New Item" />
-      <input type="hidden" name="category" value="<%= cat %>" />
-      <button>Add Item</button>
-    </form>
-    <ul>
-      <% items.forEach(item => { %>
-        <li>
-          <%= item %>
-          <form action="/remove-item" method="POST" style="display:inline;">
-            <input type="hidden" name="category" value="<%= cat %>" />
-            <input type="hidden" name="item" value="<%= item %>" />
-            <button>❌</button>
-          </form>
-        </li>
-      <% }) %>
-    </ul>
-  <% }) %>
-  <script src="/script.js"></script>
-</body>
-</html>
+app.get("/", (req, res) => {
+  const { members = [], categories = {} } = db.getState();
+  res.render("index", { members, categories });
+});
+
+// --- Member Routes ---
+app.post("/add-member", (req, res) => {
+  const { name } = req.body;
+  db.get("members")
+    .push({
+      name,
+      attendance: Array(8).fill(false),
+      items: {}
+    })
+    .sortBy("name")
+    .write();
+  res.redirect("/");
+});
+
+app.post("/remove-member", (req, res) => {
+  const { name } = req.body;
+  db.get("members").remove({ name }).write();
+  res.redirect("/");
+});
+
+app.post("/update-attendance", (req, res) => {
+  const updates = req.body;
+  db.get("members").forEach(member => {
+    if (updates[member.name]) {
+      member.attendance = updates[member.name].map(a => a === "true");
+    }
+  }).write();
+  res.redirect("/");
+});
+
+// --- Categories ---
+app.post("/add-category", (req, res) => {
+  const { category } = req.body;
+  const categories = db.get("categories").value();
+  if (!categories[category]) {
+    db.get("categories").set(category, []).write();
+  }
+  res.redirect("/");
+});
+
+app.post("/remove-category", (req, res) => {
+  const { category } = req.body;
+  db.get("categories").unset(category).write();
+  db.get("members").forEach(m => {
+    m.items[category] = undefined;
+  }).write();
+  res.redirect("/");
+});
+
+// --- Items ---
+app.post("/add-item", (req, res) => {
+  const { category, item } = req.body;
+  const items = db.get("categories").get(category).value();
+  if (!items.includes(item)) {
+    db.get("categories").get(category).push(item).write();
+  }
+  res.redirect("/");
+});
+
+app.post("/remove-item", (req, res) => {
+  const { category, item } = req.body;
+  db.get("categories").get(category).remove(i => i === item).write();
+  db.get("members").forEach(m => {
+    m.items[category] = m.items[category] ? m.items[category].filter(i => i !== item) : [];
+  }).write();
+  res.redirect("/");
+});
+
+// --- Assignments ---
+app.post("/assign-item", (req, res) => {
+  const { member, category, item } = req.body;
+  const m = db.get("members").find({ name: member }).value();
+  if (!m.items[category]) {
+    m.items[category] = [];
+  }
+  if (!m.items[category].includes(item)) {
+    m.items[category].push(item);
+  }
+  db.write();
+  res.redirect("/");
+});
+
+app.post("/unassign-item", (req, res) => {
+  const { member, category, item } = req.body;
+  const m = db.get("members").find({ name: member }).value();
+  if (m.items[category]) {
+    m.items[category] = m.items[category].filter(i => i !== item);
+  }
+  db.write();
+  res.redirect("/");
+});
+
+// --- Eligibility Check ---
+app.post("/check-eligibility", (req, res) => {
+  const { category, item } = req.body;
+  const eligible = db.get("members")
+    .filter(m => {
+      const attended = m.attendance.filter(e => e).length;
+      const hasItem = m.items[category] && m.items[category].includes(item);
+      return attended >= 4 && hasItem;
+    })
+    .value();
+  res.json({ eligible });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("App running on port", PORT));

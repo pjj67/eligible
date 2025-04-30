@@ -1,134 +1,127 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const { Low } = require("lowdb");
-const { JSONFile } = require("lowdb/node");
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync"); // Correct import for lowdb v1.x
 
 const file = path.join(__dirname, "db.json");
-const adapter = new JSONFile(file);
-const db = new Low(adapter);
+const adapter = new FileSync(file); // Using FileSync adapter for lowdb v1.x
+const db = low(adapter);
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  await db.read();
-  const { members = [], categories = {} } = db.data;
+app.get("/", (req, res) => {
+  const { members = [], categories = {} } = db.getState();
   res.render("index", { members, categories });
 });
 
 // --- Member Routes ---
-app.post("/add-member", async (req, res) => {
+app.post("/add-member", (req, res) => {
   const { name } = req.body;
-  await db.read();
-  db.data.members.push({
-    name,
-    attendance: Array(8).fill(false),
-    items: {}
-  });
-  db.data.members.sort((a, b) => a.name.localeCompare(b.name));
-  await db.write();
+  db.get("members")
+    .push({
+      name,
+      attendance: Array(8).fill(false),
+      items: {}
+    })
+    .sortBy("name")
+    .write();
   res.redirect("/");
 });
 
-app.post("/remove-member", async (req, res) => {
+app.post("/remove-member", (req, res) => {
   const { name } = req.body;
-  await db.read();
-  db.data.members = db.data.members.filter(m => m.name !== name);
-  await db.write();
+  db.get("members").remove({ name }).write();
   res.redirect("/");
 });
 
-app.post("/update-attendance", async (req, res) => {
-  await db.read();
+app.post("/update-attendance", (req, res) => {
   const updates = req.body;
-  db.data.members.forEach(member => {
+  db.get("members").forEach(member => {
     if (updates[member.name]) {
       member.attendance = updates[member.name].map(a => a === "true");
     }
-  });
-  await db.write();
+  }).write();
   res.redirect("/");
 });
 
 // --- Categories ---
-app.post("/add-category", async (req, res) => {
+app.post("/add-category", (req, res) => {
   const { category } = req.body;
-  await db.read();
-  db.data.categories[category] = db.data.categories[category] || [];
-  await db.write();
+  const categories = db.get("categories").value();
+  if (!categories[category]) {
+    db.get("categories").set(category, []).write();
+  }
   res.redirect("/");
 });
 
-app.post("/remove-category", async (req, res) => {
+app.post("/remove-category", (req, res) => {
   const { category } = req.body;
-  await db.read();
-  delete db.data.categories[category];
-  db.data.members.forEach(m => delete m.items[category]);
-  await db.write();
+  db.get("categories").unset(category).write();
+  db.get("members").forEach(m => {
+    m.items[category] = undefined;
+  }).write();
   res.redirect("/");
 });
 
 // --- Items ---
-app.post("/add-item", async (req, res) => {
+app.post("/add-item", (req, res) => {
   const { category, item } = req.body;
-  await db.read();
-  db.data.categories[category] = db.data.categories[category] || [];
-  if (!db.data.categories[category].includes(item)) {
-    db.data.categories[category].push(item);
+  const items = db.get("categories").get(category).value();
+  if (!items.includes(item)) {
+    db.get("categories").get(category).push(item).write();
   }
-  await db.write();
   res.redirect("/");
 });
 
-app.post("/remove-item", async (req, res) => {
+app.post("/remove-item", (req, res) => {
   const { category, item } = req.body;
-  await db.read();
-  db.data.categories[category] = db.data.categories[category].filter(i => i !== item);
-  db.data.members.forEach(m => {
-    if (m.items[category]) {
-      m.items[category] = m.items[category].filter(i => i !== item);
-    }
-  });
-  await db.write();
+  db.get("categories").get(category).remove(i => i === item).write();
+  db.get("members").forEach(m => {
+    m.items[category] = m.items[category] ? m.items[category].filter(i => i !== item) : [];
+  }).write();
   res.redirect("/");
 });
 
 // --- Assignments ---
-app.post("/assign-item", async (req, res) => {
+app.post("/assign-item", (req, res) => {
   const { member, category, item } = req.body;
-  await db.read();
-  const m = db.data.members.find(m => m.name === member);
-  if (!m.items[category]) m.items[category] = [];
-  if (!m.items[category].includes(item)) m.items[category].push(item);
-  await db.write();
+  const m = db.get("members").find({ name: member }).value();
+  if (!m.items[category]) {
+    m.items[category] = [];
+  }
+  if (!m.items[category].includes(item)) {
+    m.items[category].push(item);
+  }
+  db.write();
   res.redirect("/");
 });
 
-app.post("/unassign-item", async (req, res) => {
+app.post("/unassign-item", (req, res) => {
   const { member, category, item } = req.body;
-  await db.read();
-  const m = db.data.members.find(m => m.name === member);
+  const m = db.get("members").find({ name: member }).value();
   if (m.items[category]) {
     m.items[category] = m.items[category].filter(i => i !== item);
   }
-  await db.write();
+  db.write();
   res.redirect("/");
 });
 
 // --- Eligibility Check ---
-app.post("/check-eligibility", async (req, res) => {
+app.post("/check-eligibility", (req, res) => {
   const { category, item } = req.body;
-  await db.read();
-  const eligible = db.data.members.filter(m => {
-    const attended = m.attendance.filter(e => e).length;
-    const hasItem = m.items[category] && m.items[category].includes(item);
-    return attended >= 4 && hasItem;
-  });
+  const eligible = db.get("members")
+    .filter(m => {
+      const attended = m.attendance.filter(e => e).length;
+      const hasItem = m.items[category] && m.items[category].includes(item);
+      return attended >= 4 && hasItem;
+    })
+    .value();
   res.json({ eligible });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5174;
 app.listen(PORT, () => console.log("App running on port", PORT));
