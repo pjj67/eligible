@@ -11,25 +11,25 @@
   <!-- Attendance Section -->
   <h2>Attendance:</h2>
   <form action="/update-attendance" method="POST">
-    <% members.forEach(function(member) { %>
-      <div style="margin-bottom: 1rem;">
-        <strong><%= member.name %></strong><br>
-        <% for (let i = 0; i < 8; i++) { %>
-          <!-- Hidden input sends false if checkbox is unchecked -->
-          <input type="hidden" name="attendance[<%= member.name %>][<%= i %>]" value="false">
-          <label>
-            Event <%= i + 1 %>
-            <input
-              type="checkbox"
-              name="attendance[<%= member.name %>][<%= i %>]"
-              value="true"
-              <%= member.attendance[i] ? "checked" : "" %> />
-          </label>
-        <% } %>
-      </div>
-    <% }) %>
-    <button type="submit">Update Attendance</button>
-  </form>
+  <% members.forEach(function(member) { %>
+    <div style="margin-bottom: 1rem;">
+      <strong><%= member.name %></strong><br>
+      <% for (let i = 0; i < 8; i++) { %>
+        <!-- Hidden input sends false if checkbox is unchecked -->
+        <input type="hidden" name="attendance[<%= member.name %>][<%= i %>]" value="false">
+        <label>
+          Event <%= i + 1 %>
+          <input
+            type="checkbox"
+            name="attendance[<%= member.name %>][<%= i %>]"
+            value="true"
+            <%= member.attendance[i] ? "checked" : "" %> />
+        </label>
+      <% } %>
+    </div>
+  <% }) %>
+  <button type="submit">Update Attendance</button>
+</form>
 
   <!-- Add Member Form -->
   <h3>Add Member:</h3>

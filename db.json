@@ -1,24 +1,43 @@
 {
   "members": [
     {
-  "attendance": {
-    "Jane": [
-      false,
-      true,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
+      "name": "Jane",
+      "attendance": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "items": {}
+    },
+    {
+      "name": "John",
+      "attendance": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "items": {
+        "Wand": [
+          "Daigon"
+        ]
+      }
+    }
+  ],
+  "categories": {
+    "Staff": [
+      "Daigon"
     ],
-    "John": [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    ]
+    "Wand": [],
+    "Daggers": []
+  }
+}

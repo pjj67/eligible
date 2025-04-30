@@ -117,29 +117,25 @@ app.post("/revoke-need", (req, res) => {
 app.post("/update-attendance", (req, res) => {
   console.log("Attendance submission:", JSON.stringify(req.body, null, 2));
 
-  const updates = req.body.attendance || {};
+  const updates = req.body.attendance || {}; // Get the submitted attendance data
 
-  const members = db.get("members").value();
+  const members = db.get("members").value(); // Get the current list of members from the database
 
   const updatedMembers = members.map(member => {
     const name = member.name;
-    const attendanceData = updates[name] || {};
+    const attendanceData = updates[name] || []; // Get attendance data for the member
 
-    const newAttendance = [];
-
-    for (let i = 0; i < 8; i++) {
-      const val = attendanceData[i] === "true"; // Ensure we correctly interpret 'true' and 'false'
-      newAttendance[i] = val;
-    }
+    // Update attendance for each event (8 events in total)
+    const newAttendance = attendanceData.map(att => att === "true"); // Convert "true"/"false" to boolean
 
     return {
       ...member,
-      attendance: newAttendance
+      attendance: newAttendance // Update attendance
     };
   });
 
-  db.set("members", updatedMembers).write();
-  res.redirect("/");
+  db.set("members", updatedMembers).write(); // Write updated members to the database
+  res.redirect("/"); // Redirect back to the dashboard
 });
 
 const PORT = process.env.PORT || 3000;
