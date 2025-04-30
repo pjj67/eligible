@@ -116,7 +116,7 @@ app.post("/revoke-need", (req, res) => {
 app.post("/update-attendance", (req, res) => {
   console.log("Attendance submission:", JSON.stringify(req.body, null, 2));
 
-  const updates = req.body;
+  const updates = req.body.attendance || {};
 
   const members = db.get("members").value();
 
@@ -127,8 +127,9 @@ app.post("/update-attendance", (req, res) => {
     const newAttendance = [];
 
     for (let i = 0; i < 8; i++) {
-      const val = attendanceData[i];
-      newAttendance[i] = val === "true"; // undefined -> false
+      // Set to 'true' or 'false' based on the data sent by the form
+      const val = attendanceData[i] === "true"; // Ensure we correctly interpret 'true' and 'false'
+      newAttendance[i] = val;
     }
 
     return {
