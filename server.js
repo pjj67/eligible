@@ -9,6 +9,7 @@ const adapter = new FileSync(file); // Using FileSync adapter for lowdb v1.x
 const db = low(adapter);
 
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));  // Make sure views folder is correctly set
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -24,7 +25,7 @@ app.post("/add-member", (req, res) => {
   db.get("members")
     .push({
       name,
-      attendance: Array(8).fill(false),
+      attendance: Array(8).fill(false), // Set initial attendance to false for all events (8 events)
       items: {}
     })
     .sortBy("name")
@@ -40,11 +41,15 @@ app.post("/remove-member", (req, res) => {
 
 app.post("/update-attendance", (req, res) => {
   const updates = req.body;
+  
+  // Loop through all members and update attendance
   db.get("members").forEach(member => {
     if (updates[member.name]) {
+      // Convert the attendance data (true/false) based on the submitted checkbox values
       member.attendance = updates[member.name].map(a => a === "true");
     }
   }).write();
+
   res.redirect("/");
 });
 
@@ -123,5 +128,5 @@ app.post("/check-eligibility", (req, res) => {
   res.json({ eligible });
 });
 
-const PORT = process.env.PORT || 5174;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("App running on port", PORT));

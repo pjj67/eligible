@@ -1,4 +1,10 @@
 {
-  "members": [],
-  "categories": {}
+  "members": [
+    { "name": "John", "attendance": [true, false, true, true, false, true, false, true], "items": {} },
+    { "name": "Jane", "attendance": [false, true, false, true, true, false, true, false], "items": {} }
+  ],
+  "categories": {
+    "Food": ["Pizza", "Burger", "Pasta"],
+    "Drinks": ["Water", "Soda"]
+  }
 }
