@@ -1,10 +1,38 @@
 {
   "members": [
-    { "name": "John", "attendance": [true, false, true, true, false, true, false, true], "items": {} },
-    { "name": "Jane", "attendance": [false, true, false, true, true, false, true, false], "items": {} }
+    {
+      "name": "John",
+      "attendance": [
+        true,
+        true,
+        true
+      ],
+      "items": {
+        "Wand": [
+          "Daigon"
+        ]
+      }
+    },
+    {
+      "name": "Jane",
+      "attendance": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "items": {}
+    }
   ],
   "categories": {
-    "Food": ["Pizza", "Burger", "Pasta"],
-    "Drinks": ["Water", "Soda"]
+    "Staff": [
+      "Daigon"
+    ],
+    "Wand": [],
+    "Daggers": []
   }
 }

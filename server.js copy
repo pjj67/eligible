@@ -9,7 +9,7 @@ const adapter = new FileSync(file); // Using FileSync adapter for lowdb v1.x
 const db = low(adapter);
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "views"));  // Make sure views folder is correctly set
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -30,7 +30,7 @@ app.post("/add-member", (req, res) => {
     .push({
       name,
       attendance: Array(8).fill(false), // Set initial attendance to false for all events (8 events)
-      items: {} // This will track the items each member has
+      items: {}
     })
     .sortBy("name")
     .write();
@@ -40,6 +40,20 @@ app.post("/add-member", (req, res) => {
 app.post("/remove-member", (req, res) => {
   const { name } = req.body;
   db.get("members").remove({ name }).write();
+  res.redirect("/");
+});
+
+app.post("/update-attendance", (req, res) => {
+  const updates = req.body;
+  
+  // Loop through all members and update attendance
+  db.get("members").forEach(member => {
+    if (updates[member.name]) {
+      // Convert the attendance data (true/false) based on the submitted checkbox values
+      member.attendance = updates[member.name].map(a => a === "true");
+    }
+  }).write();
+
   res.redirect("/");
 });
 
@@ -81,36 +95,41 @@ app.post("/remove-item", (req, res) => {
   res.redirect("/");
 });
 
-// --- Need List Assignment and Revocation ---
-app.post("/assign-need", (req, res) => {
+// --- Assignments ---
+app.post("/assign-item", (req, res) => {
   const { member, category, item } = req.body;
   const m = db.get("members").find({ name: member }).value();
-
-  // Ensure the items property exists
   if (!m.items[category]) {
     m.items[category] = [];
   }
-
-  // Assign the item if not already assigned
   if (!m.items[category].includes(item)) {
     m.items[category].push(item);
   }
-  
   db.write();
   res.redirect("/");
 });
 
-app.post("/revoke-need", (req, res) => {
+app.post("/unassign-item", (req, res) => {
   const { member, category, item } = req.body;
   const m = db.get("members").find({ name: member }).value();
-
-  // If the member has the item, remove it
   if (m.items[category]) {
     m.items[category] = m.items[category].filter(i => i !== item);
   }
-
   db.write();
   res.redirect("/");
+});
+
+// --- Eligibility Check ---
+app.post("/check-eligibility", (req, res) => {
+  const { category, item } = req.body;
+  const eligible = db.get("members")
+    .filter(m => {
+      const attended = m.attendance.filter(e => e).length;
+      const hasItem = m.items[category] && m.items[category].includes(item);
+      return attended >= 4 && hasItem;
+    })
+    .value();
+  res.json({ eligible });
 });
 
 const PORT = process.env.PORT || 3000;
