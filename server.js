@@ -113,28 +113,33 @@ app.post("/revoke-need", (req, res) => {
   res.redirect("/");
 });
 
-/// --- Attendance Update Route ---
 app.post("/update-attendance", (req, res) => {
+  console.log("Attendance submission:", JSON.stringify(req.body, null, 2));
+
   const updates = req.body;
 
-  db.get("members").forEach(member => {
-    const attendanceData = updates[member.name];
+  const members = db.get("members").value();
 
-    if (attendanceData) {
-      const newAttendance = [];
+  const updatedMembers = members.map(member => {
+    const name = member.name;
+    const attendanceData = updates[name] || {};
 
-      for (let i = 0; i < 8; i++) {
-        // attendanceData[i] may be 'true' or 'false' (as strings)
-        newAttendance[i] = attendanceData[i] === "true";
-      }
+    const newAttendance = [];
 
-      member.attendance = newAttendance;
+    for (let i = 0; i < 8; i++) {
+      const val = attendanceData[i];
+      newAttendance[i] = val === "true"; // undefined -> false
     }
-  }).write();
 
+    return {
+      ...member,
+      attendance: newAttendance
+    };
+  });
+
+  db.set("members", updatedMembers).write();
   res.redirect("/");
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("App running on port", PORT));

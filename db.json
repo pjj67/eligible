@@ -3,10 +3,10 @@
     {
       "name": "Jane",
       "attendance": [
-        false,
-        false,
-        false,
-        false,
+        true,
+        true,
+        true,
+        true,
         false,
         false,
         false,
@@ -17,9 +17,9 @@
     {
       "name": "John",
       "attendance": [
-        false,
-        false,
-        false,
+        true,
+        true,
+        true,
         false,
         false,
         false,
