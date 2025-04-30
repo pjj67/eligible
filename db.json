@@ -3,18 +3,18 @@
     {
       "name": "Angry",
       "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
+        true,
+        true,
+        true,
+        true,
+        true,
         false,
         false,
         false
       ],
       "items": {
         "Wand": [
-          "Daigon"
+          "codex"
         ]
       }
     },
@@ -30,7 +30,11 @@
         false,
         true
       ],
-      "items": {}
+      "items": {
+        "Wand": [
+          "codex"
+        ]
+      }
     },
     {
       "name": "John",
@@ -45,17 +49,24 @@
         false
       ],
       "items": {
-        "Wand": []
+        "Wand": [],
+        "Staff": [
+          "Daigon"
+        ]
       }
     }
   ],
   "categories": {
     "Staff": [
-      "Daigon"
+      "Daigon",
+      "greyeye"
     ],
     "Wand": [
-      "codex"
+      "codex",
+      "tevent"
     ],
-    "Daggers": []
+    "Daggers": [
+      "perless"
+    ]
   }
 }
