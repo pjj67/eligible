@@ -88,7 +88,9 @@ app.post("/remove-item", async (req, res) => {
   await db.read();
   db.data.categories[category] = db.data.categories[category].filter(i => i !== item);
   db.data.members.forEach(m => {
-    m.items[category] = (m.items[category] || []).filter(i => i !== item);
+    if (m.items[category]) {
+      m.items[category] = m.items[category].filter(i => i !== item);
+    }
   });
   await db.write();
   res.redirect("/");
