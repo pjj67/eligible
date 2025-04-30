@@ -3,28 +3,16 @@
     {
       "name": "Jane",
       "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
+        true,
+        true
       ],
       "items": {}
     },
     {
       "name": "John",
       "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
+        true,
+        true
       ],
       "items": {
         "Wand": [
