@@ -1,31 +1,26 @@
 {
   "members": [
     {
+      "name": "Jane",
+      "attendance": [
+        false,
+        false
+      ],
+      "items": {}
+    },
+    {
       "name": "John",
       "attendance": [
-        true,
-        true,
-        true
+        false,
+        false,
+        false,
+        false
       ],
       "items": {
         "Wand": [
           "Daigon"
         ]
       }
-    },
-    {
-      "name": "Jane",
-      "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "items": {}
     }
   ],
   "categories": {

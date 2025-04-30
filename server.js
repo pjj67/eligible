@@ -2,10 +2,10 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync"); // Correct import for lowdb v1.x
+const FileSync = require("lowdb/adapters/FileSync");
 
 const file = path.join(__dirname, "db.json");
-const adapter = new FileSync(file); // Using FileSync adapter for lowdb v1.x
+const adapter = new FileSync(file);
 const db = low(adapter);
 
 app.set("view engine", "ejs");
@@ -112,6 +112,29 @@ app.post("/revoke-need", (req, res) => {
   db.write();
   res.redirect("/");
 });
+
+/// --- Attendance Update Route ---
+app.post("/update-attendance", (req, res) => {
+  const updates = req.body; // This will have member names as keys
+
+  // Loop through all members and update their attendance based on the submitted data
+  db.get("members").forEach(member => {
+    if (updates[member.name]) {
+      // Map through the events to update attendance based on submitted data
+      const updatedAttendance = member.attendance.map((att, index) => {
+        // Check if the event is marked as "true" or "false" in the form data
+        return updates[member.name][index] === "true"; 
+      });
+
+      // Update the member's attendance
+      member.attendance = updatedAttendance;
+    }
+  }).write();
+
+  // Redirect back to the homepage after updating
+  res.redirect("/");
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("App running on port", PORT));

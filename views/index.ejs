@@ -14,16 +14,22 @@
     <li>
       <strong><%= member.name %></strong>
       <form action="/update-attendance" method="POST">
-        <input type="hidden" name="memberName" value="<%= member.name %>">
         <label>Attendance:</label>
         <% for (let i = 0; i < 8; i++) { %>
-          <input type="checkbox" name="<%= member.name %>[]" value="true" <%= member.attendance[i] ? "checked" : "" %>> Event <%= i + 1 %>
+          <!-- Hidden input to ensure unchecked checkboxes are sent -->
+          <input type="hidden" name="<%= member.name %>[<%= i %>]" value="false">
+          
+          <!-- Checkbox input to mark attendance -->
+          <label for="event<%= i %>">Event <%= i + 1 %></label>
+          <input type="checkbox" name="<%= member.name %>[<%= i %>]" value="true" 
+                 <%= member.attendance[i] ? "checked" : "" %>> 
         <% } %>
         <input type="submit" value="Update Attendance">
       </form>
     </li>
   <% }) %>
 </ul>
+
 
   <!-- Add Member Form -->
   <h3>Add Member:</h3>
