@@ -2,14 +2,14 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync"); // Correct import for lowdb v1.x
+const FileSync = require("lowdb/adapters/FileSync");
 
 const file = path.join(__dirname, "db.json");
-const adapter = new FileSync(file); // Using FileSync adapter for lowdb v1.x
+const adapter = new FileSync(file);
 const db = low(adapter);
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));  // Make sure views folder is correctly set
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -30,7 +30,7 @@ app.post("/add-member", (req, res) => {
     .push({
       name,
       attendance: Array(8).fill(false), // Set initial attendance to false for all events (8 events)
-      items: {}
+      items: {} // This will track the items each member has
     })
     .sortBy("name")
     .write();
@@ -40,20 +40,6 @@ app.post("/add-member", (req, res) => {
 app.post("/remove-member", (req, res) => {
   const { name } = req.body;
   db.get("members").remove({ name }).write();
-  res.redirect("/");
-});
-
-app.post("/update-attendance", (req, res) => {
-  const updates = req.body;
-  
-  // Loop through all members and update attendance
-  db.get("members").forEach(member => {
-    if (updates[member.name]) {
-      // Convert the attendance data (true/false) based on the submitted checkbox values
-      member.attendance = updates[member.name].map(a => a === "true");
-    }
-  }).write();
-
   res.redirect("/");
 });
 
@@ -95,41 +81,61 @@ app.post("/remove-item", (req, res) => {
   res.redirect("/");
 });
 
-// --- Assignments ---
-app.post("/assign-item", (req, res) => {
+// --- Need List Assignment and Revocation ---
+app.post("/assign-need", (req, res) => {
   const { member, category, item } = req.body;
   const m = db.get("members").find({ name: member }).value();
+
+  // Ensure the items property exists
   if (!m.items[category]) {
     m.items[category] = [];
   }
+
+  // Assign the item if not already assigned
   if (!m.items[category].includes(item)) {
     m.items[category].push(item);
   }
+  
   db.write();
   res.redirect("/");
 });
 
-app.post("/unassign-item", (req, res) => {
+app.post("/revoke-need", (req, res) => {
   const { member, category, item } = req.body;
   const m = db.get("members").find({ name: member }).value();
+
+  // If the member has the item, remove it
   if (m.items[category]) {
     m.items[category] = m.items[category].filter(i => i !== item);
   }
+
   db.write();
   res.redirect("/");
 });
 
-// --- Eligibility Check ---
-app.post("/check-eligibility", (req, res) => {
-  const { category, item } = req.body;
-  const eligible = db.get("members")
-    .filter(m => {
-      const attended = m.attendance.filter(e => e).length;
-      const hasItem = m.items[category] && m.items[category].includes(item);
-      return attended >= 4 && hasItem;
-    })
-    .value();
-  res.json({ eligible });
+// --- Attendance Update ---
+app.post("/update-attendance", (req, res) => {
+  console.log("Attendance submission:", JSON.stringify(req.body, null, 2));
+
+  const updates = req.body.attendance || {}; // Get the submitted attendance data
+
+  const members = db.get("members").value(); // Get the current list of members from the database
+
+  const updatedMembers = members.map(member => {
+    const name = member.name;
+    const attendanceData = updates[name] || []; // Get attendance data for the member
+
+    // Update attendance for each event (8 events in total)
+    const newAttendance = attendanceData.map(att => att === "true"); // Convert "true"/"false" to boolean
+
+    return {
+      ...member,
+      attendance: newAttendance // Update attendance
+    };
+  });
+
+  db.set("members", updatedMembers).write(); // Write updated members to the database
+  res.redirect("/"); // Redirect back to the dashboard
 });
 
 const PORT = process.env.PORT || 3000;

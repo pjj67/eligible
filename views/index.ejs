@@ -8,6 +8,22 @@
 <body>
   <h1>Welcome to the Members Dashboard</h1>
 
+  <!-- Eligibility Checker -->
+  <h2>Eligibility Checker:</h2>
+  <ul>
+    <% members.forEach(function(member) { 
+      const attendanceCount = member.attendance.filter(a => a).length;
+      const hasItems = Object.values(member.items).some(arr => arr && arr.length > 0);
+      const isEligible = attendanceCount >= 4 && hasItems;
+    %>
+      <li>
+        <strong><%= member.name %></strong> - 
+        Attendance: <%= attendanceCount %>/8 - 
+        <%= isEligible ? "✅ Eligible" : "❌ Not Eligible" %>
+      </li>
+    <% }) %>
+  </ul>
+
   <!-- Attendance Section -->
   <h2>Attendance:</h2>
   <form action="/update-attendance" method="POST" id="attendance-form">
@@ -52,6 +68,18 @@
     <label for="name">Member Name:</label>
     <input type="text" name="name" required>
     <input type="submit" value="Add Member">
+  </form>
+
+  <!-- Remove Member -->
+  <h3>Remove Member:</h3>
+  <form action="/remove-member" method="POST">
+    <label for="name">Select Member:</label>
+    <select name="name" required>
+      <% members.forEach(function(member) { %>
+        <option value="<%= member.name %>"><%= member.name %></option>
+      <% }) %>
+    </select>
+    <input type="submit" value="Remove Member">
   </form>
 
   <!-- Category Section -->
@@ -105,21 +133,46 @@
             <% } %>
           <% }) %>
         </ul>
+
         <form action="/assign-need" method="POST">
-          <label for="category">Assign Item:</label>
-          <select name="category" required>
+          <label for="category">Category:</label>
+          <select name="category" required onchange="updateItemDropdown(this, '<%= member.name %>')">
             <% Object.keys(categories).forEach(function(category) { %>
               <option value="<%= category %>"><%= category %></option>
             <% }) %>
           </select>
+
           <label for="item">Item:</label>
-          <input type="text" name="item" required>
+          <select name="item" id="item-select-<%= member.name %>" required>
+            <% const firstCategory = Object.keys(categories)[0];
+               categories[firstCategory].forEach(function(item) { %>
+              <option value="<%= item %>"><%= item %></option>
+            <% }) %>
+          </select>
+
           <input type="hidden" name="member" value="<%= member.name %>">
           <input type="submit" value="Assign">
         </form>
       </li>
     <% }) %>
   </ul>
+
+  <script>
+    const categories = <%- JSON.stringify(categories) %>;
+
+    function updateItemDropdown(categorySelect, memberName) {
+      const category = categorySelect.value;
+      const itemSelect = document.getElementById(`item-select-${memberName}`);
+      itemSelect.innerHTML = '';
+
+      (categories[category] || []).forEach(item => {
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        itemSelect.appendChild(option);
+      });
+    }
+  </script>
 
   <!-- Add Category Form -->
   <h3>Add Category:</h3>

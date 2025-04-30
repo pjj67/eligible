@@ -1,31 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Members Dashboard</title>
 </head>
 <body>
   <h1>Welcome to the Members Dashboard</h1>
 
-  <h2>Members:</h2>
-  <form action="/update-attendance" method="POST">
-    <ul>
-      <% members.forEach(function(member) { %>
-        <li>
-          <strong><%= member.name %></strong>
-          <label>Attendance:</label>
-          <!-- Loop over the 8 events for attendance checkboxes -->
-          <% for (let i = 0; i < 8; i++) { %>
-            <label for="<%= member.name %>-event<%= i+1 %>">Event <%= i+1 %>:</label>
-            <input type="checkbox" name="<%= member.name %>[]" value="true" <%= member.attendance[i] ? "checked" : "" %> />
-          <% } %>
-        </li>
-      <% }) %>
-    </ul>
-    <input type="submit" value="Update Attendance">
+  <!-- Attendance Section -->
+  <h2>Attendance:</h2>
+  <form action="/update-attendance" method="POST" id="attendance-form">
+    <% members.forEach(function(member) { %>
+      <div style="margin-bottom: 1rem;">
+        <strong><%= member.name %></strong><br>
+        <% for (let i = 0; i < 8; i++) { %>
+          <label>
+            A <%= i + 1 %>
+            <input
+              type="checkbox"
+              name="attendance[<%= member.name %>][<%= i %>]"
+              value="true"
+              <%= member.attendance[i] ? "checked" : "" %> />
+          </label>
+        <% } %>
+      </div>
+    <% }) %>
+    <button type="submit">Update Attendance</button>
   </form>
 
+  <script>
+    // Before form submission, inject "false" for unchecked checkboxes
+    document.getElementById('attendance-form').addEventListener('submit', function(e) {
+      const form = e.target;
+      const checkboxes = form.querySelectorAll('input[type=checkbox]');
+      checkboxes.forEach(cb => {
+        if (!cb.checked) {
+          const hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = cb.name;
+          hidden.value = 'false';
+          form.appendChild(hidden);
+        }
+      });
+    });
+  </script>
+
+  <!-- Add Member Form -->
+  <h3>Add Member:</h3>
+  <form action="/add-member" method="POST">
+    <label for="name">Member Name:</label>
+    <input type="text" name="name" required>
+    <input type="submit" value="Add Member">
+  </form>
+
+  <!-- Category Section -->
   <h2>Categories:</h2>
   <ul>
     <% Object.keys(categories).forEach(function(category) { %>
@@ -35,43 +64,69 @@
           <% categories[category].forEach(function(item) { %>
             <li>
               <%= item %>
-              <form action="/assign-item" method="POST">
+              <form action="/remove-item" method="POST">
                 <input type="hidden" name="category" value="<%= category %>">
                 <input type="hidden" name="item" value="<%= item %>">
-                <label for="member">Assign to member:</label>
-                <select name="member">
-                  <% members.forEach(function(member) { %>
-                    <option value="<%= member.name %>"><%= member.name %></option>
-                  <% }) %>
-                </select>
-                <input type="submit" value="Assign">
-              </form>
-              <form action="/unassign-item" method="POST">
-                <input type="hidden" name="category" value="<%= category %>">
-                <input type="hidden" name="item" value="<%= item %>">
-                <input type="submit" value="Unassign">
+                <input type="submit" value="Remove Item">
               </form>
             </li>
           <% }) %>
         </ul>
+        <form action="/add-item" method="POST">
+          <input type="hidden" name="category" value="<%= category %>">
+          <label for="item">Add Item:</label>
+          <input type="text" name="item" required>
+          <input type="submit" value="Add Item">
+        </form>
       </li>
     <% }) %>
   </ul>
 
-  <h2>Check Eligibility:</h2>
-  <form action="/check-eligibility" method="POST">
-    <label for="category">Category:</label>
-    <select name="category">
-      <% Object.keys(categories).forEach(function(category) { %>
-        <option value="<%= category %>"><%= category %></option>
-      <% }) %>
-    </select>
+  <!-- Need List Section -->
+  <h2>Need List:</h2>
+  <ul>
+    <% members.forEach(function(member) { %>
+      <li>
+        <strong><%= member.name %></strong>
+        <ul>
+          <% Object.keys(categories).forEach(function(category) { %>
+            <% if (member.items[category]) { %>
+              <% member.items[category].forEach(function(item) { %>
+                <li>
+                  <%= item %>
+                  <form action="/revoke-need" method="POST">
+                    <input type="hidden" name="member" value="<%= member.name %>">
+                    <input type="hidden" name="category" value="<%= category %>">
+                    <input type="hidden" name="item" value="<%= item %>">
+                    <input type="submit" value="Revoke">
+                  </form>
+                </li>
+              <% }) %>
+            <% } %>
+          <% }) %>
+        </ul>
+        <form action="/assign-need" method="POST">
+          <label for="category">Assign Item:</label>
+          <select name="category" required>
+            <% Object.keys(categories).forEach(function(category) { %>
+              <option value="<%= category %>"><%= category %></option>
+            <% }) %>
+          </select>
+          <label for="item">Item:</label>
+          <input type="text" name="item" required>
+          <input type="hidden" name="member" value="<%= member.name %>">
+          <input type="submit" value="Assign">
+        </form>
+      </li>
+    <% }) %>
+  </ul>
 
-    <label for="item">Item:</label>
-    <input type="text" name="item">
-
-    <input type="submit" value="Check Eligibility">
+  <!-- Add Category Form -->
+  <h3>Add Category:</h3>
+  <form action="/add-category" method="POST">
+    <label for="category">Category Name:</label>
+    <input type="text" name="category" required>
+    <input type="submit" value="Add Category">
   </form>
-
 </body>
 </html>

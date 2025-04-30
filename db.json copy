@@ -1,24 +1,6 @@
 {
   "members": [
     {
-      "name": "Angry",
-      "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "items": {
-        "Wand": [
-          "Daigon"
-        ]
-      }
-    },
-    {
       "name": "Jane",
       "attendance": [
         true,
@@ -47,15 +29,27 @@
       "items": {
         "Wand": []
       }
+    },
+    {
+      "name": "Angry",
+      "attendance": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "items": {}
     }
   ],
   "categories": {
     "Staff": [
       "Daigon"
     ],
-    "Wand": [
-      "codex"
-    ],
+    "Wand": [],
     "Daggers": []
   }
 }
