@@ -115,23 +115,23 @@ app.post("/revoke-need", (req, res) => {
 
 /// --- Attendance Update Route ---
 app.post("/update-attendance", (req, res) => {
-  const updates = req.body; // This will have member names as keys
+  const updates = req.body;
 
-  // Loop through all members and update their attendance based on the submitted data
   db.get("members").forEach(member => {
-    if (updates[member.name]) {
-      // Map through the events to update attendance based on submitted data
-      const updatedAttendance = member.attendance.map((att, index) => {
-        // Check if the event is marked as "true" or "false" in the form data
-        return updates[member.name][index] === "true"; 
-      });
+    const attendanceData = updates[member.name];
 
-      // Update the member's attendance
-      member.attendance = updatedAttendance;
+    if (attendanceData) {
+      const newAttendance = [];
+
+      for (let i = 0; i < 8; i++) {
+        // attendanceData[i] may be 'true' or 'false' (as strings)
+        newAttendance[i] = attendanceData[i] === "true";
+      }
+
+      member.attendance = newAttendance;
     }
   }).write();
 
-  // Redirect back to the homepage after updating
   res.redirect("/");
 });
 

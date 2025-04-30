@@ -4,6 +4,12 @@
       "name": "Jane",
       "attendance": [
         false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
         false
       ],
       "items": {}
@@ -11,6 +17,10 @@
     {
       "name": "John",
       "attendance": [
+        false,
+        false,
+        false,
+        false,
         false,
         false,
         false,
