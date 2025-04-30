@@ -1,119 +1,132 @@
-/**
- * This is the main Node.js server script for your project
- * Check out the two endpoints this back-end API provides in fastify.get and fastify.post below
- */
-
+const express = require("express");
+const app = express();
 const path = require("path");
+const { Low } = require("lowdb");
+const { JSONFile } = require("lowdb/node");
 
-// Require the fastify framework and instantiate it
-const fastify = require("fastify")({
-  // Set this to true for detailed logging:
-  logger: false,
+const file = path.join(__dirname, "db.json");
+const adapter = new JSONFile(file);
+const db = new Low(adapter);
+
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.get("/", async (req, res) => {
+  await db.read();
+  const { members = [], categories = {} } = db.data;
+  res.render("index", { members, categories });
 });
 
-// ADD FAVORITES ARRAY VARIABLE FROM TODO HERE
-
-// Setup our static files
-fastify.register(require("@fastify/static"), {
-  root: path.join(__dirname, "public"),
-  prefix: "/", // optional: default '/'
+// --- Member Routes ---
+app.post("/add-member", async (req, res) => {
+  const { name } = req.body;
+  await db.read();
+  db.data.members.push({
+    name,
+    attendance: Array(8).fill(false),
+    items: {}
+  });
+  db.data.members.sort((a, b) => a.name.localeCompare(b.name));
+  await db.write();
+  res.redirect("/");
 });
 
-// Formbody lets us parse incoming forms
-fastify.register(require("@fastify/formbody"));
-
-// View is a templating manager for fastify
-fastify.register(require("@fastify/view"), {
-  engine: {
-    handlebars: require("handlebars"),
-  },
+app.post("/remove-member", async (req, res) => {
+  const { name } = req.body;
+  await db.read();
+  db.data.members = db.data.members.filter(m => m.name !== name);
+  await db.write();
+  res.redirect("/");
 });
 
-// Load and parse SEO data
-const seo = require("./src/seo.json");
-if (seo.url === "glitch-default") {
-  seo.url = `https://${process.env.PROJECT_DOMAIN}.glitch.me`;
-}
-
-/**
- * Our home page route
- *
- * Returns src/pages/index.hbs with data built into it
- */
-fastify.get("/", function (request, reply) {
-  // params is an object we'll pass to our handlebars template
-  let params = { seo: seo };
-
-  // If someone clicked the option for a random color it'll be passed in the querystring
-  if (request.query.randomize) {
-    // We need to load our color data file, pick one at random, and add it to the params
-    const colors = require("./src/colors.json");
-    const allColors = Object.keys(colors);
-    let currentColor = allColors[(allColors.length * Math.random()) << 0];
-
-    // Add the color properties to the params object
-    params = {
-      color: colors[currentColor],
-      colorError: null,
-      seo: seo,
-    };
-  }
-
-  // The Handlebars code will be able to access the parameter values and build them into the page
-  return reply.view("/src/pages/index.hbs", params);
-});
-
-/**
- * Our POST route to handle and react to form submissions
- *
- * Accepts body data indicating the user choice
- */
-fastify.post("/", function (request, reply) {
-  // Build the params object to pass to the template
-  let params = { seo: seo };
-
-  // If the user submitted a color through the form it'll be passed here in the request body
-  let color = request.body.color;
-
-  // If it's not empty, let's try to find the color
-  if (color) {
-    // ADD CODE FROM TODO HERE TO SAVE SUBMITTED FAVORITES
-
-    // Load our color data file
-    const colors = require("./src/colors.json");
-
-    // Take our form submission, remove whitespace, and convert to lowercase
-    color = color.toLowerCase().replace(/\s/g, "");
-
-    // Now we see if that color is a key in our colors object
-    if (colors[color]) {
-      // Found one!
-      params = {
-        color: colors[color],
-        colorError: null,
-        seo: seo,
-      };
-    } else {
-      // No luck! Return the user value as the error property
-      params = {
-        colorError: request.body.color,
-        seo: seo,
-      };
+app.post("/update-attendance", async (req, res) => {
+  await db.read();
+  const updates = req.body;
+  db.data.members.forEach(member => {
+    if (updates[member.name]) {
+      member.attendance = updates[member.name].map(a => a === "true");
     }
-  }
-
-  // The Handlebars template will use the parameter values to update the page with the chosen color
-  return reply.view("/src/pages/index.hbs", params);
+  });
+  await db.write();
+  res.redirect("/");
 });
 
-// Run the server and report out to the logs
-fastify.listen(
-  { port: process.env.PORT, host: "0.0.0.0" },
-  function (err, address) {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Your app is listening on ${address}`);
+// --- Categories ---
+app.post("/add-category", async (req, res) => {
+  const { category } = req.body;
+  await db.read();
+  db.data.categories[category] = db.data.categories[category] || [];
+  await db.write();
+  res.redirect("/");
+});
+
+app.post("/remove-category", async (req, res) => {
+  const { category } = req.body;
+  await db.read();
+  delete db.data.categories[category];
+  db.data.members.forEach(m => delete m.items[category]);
+  await db.write();
+  res.redirect("/");
+});
+
+// --- Items ---
+app.post("/add-item", async (req, res) => {
+  const { category, item } = req.body;
+  await db.read();
+  db.data.categories[category] = db.data.categories[category] || [];
+  if (!db.data.categories[category].includes(item)) {
+    db.data.categories[category].push(item);
   }
-);
+  await db.write();
+  res.redirect("/");
+});
+
+app.post("/remove-item", async (req, res) => {
+  const { category, item } = req.body;
+  await db.read();
+  db.data.categories[category] = db.data.categories[category].filter(i => i !== item);
+  db.data.members.forEach(m => {
+    m.items[category] = (m.items[category] || []).filter(i => i !== item);
+  });
+  await db.write();
+  res.redirect("/");
+});
+
+// --- Assignments ---
+app.post("/assign-item", async (req, res) => {
+  const { member, category, item } = req.body;
+  await db.read();
+  const m = db.data.members.find(m => m.name === member);
+  if (!m.items[category]) m.items[category] = [];
+  if (!m.items[category].includes(item)) m.items[category].push(item);
+  await db.write();
+  res.redirect("/");
+});
+
+app.post("/unassign-item", async (req, res) => {
+  const { member, category, item } = req.body;
+  await db.read();
+  const m = db.data.members.find(m => m.name === member);
+  if (m.items[category]) {
+    m.items[category] = m.items[category].filter(i => i !== item);
+  }
+  await db.write();
+  res.redirect("/");
+});
+
+// --- Eligibility Check ---
+app.post("/check-eligibility", async (req, res) => {
+  const { category, item } = req.body;
+  await db.read();
+  const eligible = db.data.members.filter(m => {
+    const attended = m.attendance.filter(e => e).length;
+    const hasItem = m.items[category] && m.items[category].includes(item);
+    return attended >= 4 && hasItem;
+  });
+  res.json({ eligible });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("App running on port", PORT));

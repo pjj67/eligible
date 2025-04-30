@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Member Tracker</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Eligibility Checker</h1>
+  <form id="eligibility-form">
+    <select name="category" id="elig-cat">
+      <% Object.keys(categories).forEach(c => { %>
+        <option value="<%= c %>"><%= c %></option>
+      <% }) %>
+    </select>
+    <select name="item" id="elig-item"></select>
+    <button type="submit">Check</button>
+  </form>
+  <div id="eligible-results"></div>
+
+  <h2>Members</h2>
+  <form action="/add-member" method="POST">
+    <input name="name" required placeholder="New Member Name" />
+    <button type="submit">Add</button>
+  </form>
+
+  <% members.forEach(m => { %>
+    <form action="/remove-member" method="POST" style="display:inline;">
+      <input type="hidden" name="name" value="<%= m.name %>" />
+      <button type="submit">❌</button>
+    </form>
+    <strong><%= m.name %></strong>
+    <form method="POST" action="/update-attendance">
+      <input type="hidden" name="<%= m.name %>" />
+      <% m.attendance.forEach((a, i) => { %>
+        <input type="checkbox" name="<%= m.name %>[]"
+               value="true" <%= a ? "checked" : "" %> />
+      <% }) %>
+      <button type="submit">Update</button>
+    </form>
+    <ul>
+      <% Object.entries(m.items || {}).forEach(([cat, items]) => { %>
+        <li><strong><%= cat %>:</strong> <%= items.join(", ") %></li>
+      <% }) %>
+    </ul>
+  <% }) %>
+
+  <h2>Categories & Items</h2>
+  <form action="/add-category" method="POST">
+    <input name="category" required placeholder="New Category" />
+    <button>Add</button>
+  </form>
+  <% Object.entries(categories).forEach(([cat, items]) => { %>
+    <h3><%= cat %>
+      <form action="/remove-category" method="POST" style="display:inline;">
+        <input type="hidden" name="category" value="<%= cat %>" />
+        <button>❌</button>
+      </form>
+    </h3>
+    <form action="/add-item" method="POST">
+      <input name="item" required placeholder="New Item" />
+      <input type="hidden" name="category" value="<%= cat %>" />
+      <button>Add Item</button>
+    </form>
+    <ul>
+      <% items.forEach(item => { %>
+        <li>
+          <%= item %>
+          <form action="/remove-item" method="POST" style="display:inline;">
+            <input type="hidden" name="category" value="<%= cat %>" />
+            <input type="hidden" name="item" value="<%= item %>" />
+            <button>❌</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  <% }) %>
+  <script src="/script.js"></script>
+</body>
+</html>
