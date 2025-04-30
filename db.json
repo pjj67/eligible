@@ -8,13 +8,58 @@
         true,
         true,
         true,
+        false,
+        false,
+        false
+      ],
+      "items": {
+        "Wand": [
+          "codex",
+          "tevent"
+        ],
+        "Staff": [
+          "Daigon"
+        ]
+      }
+    },
+    {
+      "name": "Jane",
+      "attendance": [
         true,
         true,
+        true,
+        false,
+        true,
+        false,
+        false,
         true
       ],
       "items": {
+        "Wand": [
+          "codex"
+        ],
+        "Daggers": [
+          "perless"
+        ]
+      }
+    },
+    {
+      "name": "John",
+      "attendance": [
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false
+      ],
+      "items": {
         "Wand": [],
-        "Staff": [],
+        "Staff": [
+          "Daigon"
+        ],
         "Daggers": [
           "perless"
         ]
