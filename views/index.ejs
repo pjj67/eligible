@@ -4,64 +4,198 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Members Dashboard</title>
+  <style>
+    details {
+      margin: 1em 0;
+      border: 1px solid #ccc;
+      padding: 0.5em;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
+    summary:hover {
+      color: #007BFF;
+    }
+    form {
+      margin-top: 0.5em;
+    }
+    h2 {
+      margin-top: 2em;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 1em;
+    }
+  </style>
 </head>
 <body>
   <h1>Welcome to the Members Dashboard</h1>
 
   <h2>Eligibility Checker</h2>
-<form action="/check-eligibility" method="POST">
-  <label>Category:</label>
-  <select name="category" required onchange="this.form.submit()">
-    <option value="">--Choose Category--</option>
-    <% Object.keys(categories).forEach(function(cat) { %>
-      <option value="<%= cat %>" <%= selectedCategory === cat ? "selected" : "" %>><%= cat %></option>
-    <% }) %>
-  </select>
-
-  <% if (selectedCategory) { %>
-    <label>Item:</label>
-    <select name="item" required>
-      <% categories[selectedCategory].forEach(function(itm) { %>
-        <option value="<%= itm %>" <%= selectedItem === itm ? "selected" : "" %>><%= itm %></option>
+  <form action="/check-eligibility" method="POST">
+    <label>Category:</label>
+    <select name="category" required onchange="this.form.submit()">
+      <option value="">--Choose Category--</option>
+      <% Object.keys(categories).forEach(function(cat) { %>
+        <option value="<%= cat %>" <%= selectedCategory === cat ? "selected" : "" %>><%= cat %></option>
       <% }) %>
     </select>
-    <button type="submit">Check</button>
-  <% } %>
-</form>
 
-<% if (eligibleMembers && selectedItem) { %>
-  <h3>Eligible Members for "<%= selectedItem %>":</h3>
-  <ul>
-    <% eligibleMembers.forEach(function(m) { %>
-      <li><%= m.name %></li>
-    <% }) %>
-  </ul>
-<% } %>
-
-
-  <!-- Attendance Section -->
-  <h2>Attendance:</h2>
-  <form action="/update-attendance" method="POST" id="attendance-form">
-    <% members.forEach(function(member) { %>
-      <div style="margin-bottom: 1rem;">
-        <strong><%= member.name %></strong><br>
-        <% for (let i = 0; i < 8; i++) { %>
-          <label>
-            A <%= i + 1 %>
-            <input
-              type="checkbox"
-              name="attendance[<%= member.name %>][<%= i %>]"
-              value="true"
-              <%= member.attendance[i] ? "checked" : "" %> />
-          </label>
-        <% } %>
-      </div>
-    <% }) %>
-    <button type="submit">Update Attendance</button>
+    <% if (selectedCategory) { %>
+      <label>Item:</label>
+      <select name="item" required>
+        <% categories[selectedCategory].forEach(function(itm) { %>
+          <option value="<%= itm %>" <%= selectedItem === itm ? "selected" : "" %>><%= itm %></option>
+        <% }) %>
+      </select>
+      <button type="submit">Check</button>
+    <% } %>
   </form>
 
+  <% if (eligibleMembers && selectedItem) { %>
+    <h3>Eligible Members for "<%= selectedItem %>":</h3>
+    <ul>
+      <% eligibleMembers.forEach(function(m) { %>
+        <li><%= m.name %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <!-- Attendance Section -->
+  <details>
+    <summary>Attendance</summary>
+    <form action="/update-attendance" method="POST" id="attendance-form">
+      <% members.forEach(function(member) { %>
+        <div style="margin-bottom: 1rem;">
+          <strong><%= member.name %></strong><br>
+          <% for (let i = 0; i < 8; i++) { %>
+            <label>
+              A <%= i + 1 %>
+              <input
+                type="checkbox"
+                name="attendance[<%= member.name %>][<%= i %>]"
+                value="true"
+                <%= member.attendance[i] ? "checked" : "" %> />
+            </label>
+          <% } %>
+        </div>
+      <% }) %>
+      <button type="submit">Update Attendance</button>
+    </form>
+  </details>
+
+   <!-- Category Section -->
+  <details>
+    <summary>Categories</summary>
+    <ul>
+      <% Object.keys(categories).forEach(function(category) { %>
+        <li>
+          <strong><%= category %></strong>:
+          <ul>
+            <% categories[category].forEach(function(item) { %>
+              <li>
+                <%= item %>
+                <form action="/remove-item" method="POST">
+                  <input type="hidden" name="category" value="<%= category %>">
+                  <input type="hidden" name="item" value="<%= item %>">
+                  <input type="submit" value="Remove Item">
+                </form>
+              </li>
+            <% }) %>
+          </ul>
+          <form action="/add-item" method="POST">
+            <input type="hidden" name="category" value="<%= category %>">
+            <label for="item">Add Item:</label>
+            <input type="text" name="item" required>
+            <input type="submit" value="Add Item">
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+
+    <h3>Add Category:</h3>
+    <form action="/add-category" method="POST">
+      <label for="category">Category Name:</label>
+      <input type="text" name="category" required>
+      <input type="submit" value="Add Category">
+    </form>
+  </details>
+            
+            <!-- Members Section -->
+  <details>
+    <summary>Add/Remove Members</summary>
+    <h3>Add Member:</h3>
+    <form action="/add-member" method="POST">
+      <label for="name">Member Name:</label>
+      <input type="text" name="name" required>
+      <input type="submit" value="Add Member">
+    </form>
+
+    <h3>Remove Member:</h3>
+    <form action="/remove-member" method="POST">
+      <label for="name">Select Member:</label>
+      <select name="name" required>
+        <% members.forEach(function(member) { %>
+          <option value="<%= member.name %>"><%= member.name %></option>
+        <% }) %>
+      </select>
+      <input type="submit" value="Remove Member">
+    </form>
+  </details>
+
+ <!-- Need List Section (Not Collapsible) -->
+<h2>Need List:</h2>
+<ul>
+  <% members.forEach(function(member) { %>
+    <li>
+      <strong><%= member.name %></strong>
+      <ul>
+        <% Object.keys(categories).forEach(function(category) { %>
+          <% if (member.items[category]) { %>
+            <% member.items[category].forEach(function(item) { %>
+              <li>
+                <%= item %>
+                <form action="/revoke-need" method="POST">
+                  <input type="hidden" name="member" value="<%= member.name %>">
+                  <input type="hidden" name="category" value="<%= category %>">
+                  <input type="hidden" name="item" value="<%= item %>">
+                  <input type="submit" value="Revoke">
+                </form>
+              </li>
+            <% }) %>
+          <% } %>
+        <% }) %>
+      </ul>
+
+      <form action="/assign-need" method="POST">
+        <label for="category">Category:</label>
+        <select name="category" required onchange="updateItemDropdown(this, '<%= member.name %>')">
+          <% Object.keys(categories).forEach(function(category) { %>
+            <option value="<%= category %>"><%= category %></option>
+          <% }) %>
+        </select>
+
+        <label for="item">Item:</label>
+        <select name="item" id="item-select-<%= member.name %>" required>
+          <% const firstCategory = Object.keys(categories)[0];
+             categories[firstCategory].forEach(function(item) { %>
+            <option value="<%= item %>"><%= item %></option>
+          <% }) %>
+        </select>
+
+        <input type="hidden" name="member" value="<%= member.name %>">
+        <input type="submit" value="Assign">
+      </form>
+    </li>
+  <% }) %>
+</ul>
+  </details>
+
   <script>
-    // Inject unchecked boxes as "false"
     document.getElementById('attendance-form').addEventListener('submit', function(e) {
       const form = e.target;
       const checkboxes = form.querySelectorAll('input[type=checkbox]');
@@ -78,25 +212,6 @@
 
     const categories = <%- JSON.stringify(categories) %>;
 
-    function updateEligibilityItems() {
-      const categorySelect = document.getElementById("category");
-      const itemSelect = document.getElementById("eligibility-item");
-      const selectedCategory = categorySelect.value;
-
-      itemSelect.innerHTML = '<option value="">--Choose Item--</option>';
-      if (categories[selectedCategory]) {
-        categories[selectedCategory].forEach(item => {
-          const option = document.createElement("option");
-          option.value = item;
-          option.textContent = item;
-          itemSelect.appendChild(option);
-        });
-        itemSelect.disabled = false;
-      } else {
-        itemSelect.disabled = true;
-      }
-    }
-
     function updateItemDropdown(categorySelect, memberName) {
       const category = categorySelect.value;
       const itemSelect = document.getElementById(`item-select-${memberName}`);
@@ -109,108 +224,5 @@
       });
     }
   </script>
-
-  <!-- Add Member Form -->
-  <h3>Add Member:</h3>
-  <form action="/add-member" method="POST">
-    <label for="name">Member Name:</label>
-    <input type="text" name="name" required>
-    <input type="submit" value="Add Member">
-  </form>
-
-  <!-- Remove Member -->
-  <h3>Remove Member:</h3>
-  <form action="/remove-member" method="POST">
-    <label for="name">Select Member:</label>
-    <select name="name" required>
-      <% members.forEach(function(member) { %>
-        <option value="<%= member.name %>"><%= member.name %></option>
-      <% }) %>
-    </select>
-    <input type="submit" value="Remove Member">
-  </form>
-
-  <!-- Category Section -->
-  <h2>Categories:</h2>
-  <ul>
-    <% Object.keys(categories).forEach(function(category) { %>
-      <li>
-        <strong><%= category %></strong>:
-        <ul>
-          <% categories[category].forEach(function(item) { %>
-            <li>
-              <%= item %>
-              <form action="/remove-item" method="POST">
-                <input type="hidden" name="category" value="<%= category %>">
-                <input type="hidden" name="item" value="<%= item %>">
-                <input type="submit" value="Remove Item">
-              </form>
-            </li>
-          <% }) %>
-        </ul>
-        <form action="/add-item" method="POST">
-          <input type="hidden" name="category" value="<%= category %>">
-          <label for="item">Add Item:</label>
-          <input type="text" name="item" required>
-          <input type="submit" value="Add Item">
-        </form>
-      </li>
-    <% }) %>
-  </ul>
-
-  <!-- Need List Section -->
-  <h2>Need List:</h2>
-  <ul>
-    <% members.forEach(function(member) { %>
-      <li>
-        <strong><%= member.name %></strong>
-        <ul>
-          <% Object.keys(categories).forEach(function(category) { %>
-            <% if (member.items[category]) { %>
-              <% member.items[category].forEach(function(item) { %>
-                <li>
-                  <%= item %>
-                  <form action="/revoke-need" method="POST">
-                    <input type="hidden" name="member" value="<%= member.name %>">
-                    <input type="hidden" name="category" value="<%= category %>">
-                    <input type="hidden" name="item" value="<%= item %>">
-                    <input type="submit" value="Revoke">
-                  </form>
-                </li>
-              <% }) %>
-            <% } %>
-          <% }) %>
-        </ul>
-
-        <form action="/assign-need" method="POST">
-          <label for="category">Category:</label>
-          <select name="category" required onchange="updateItemDropdown(this, '<%= member.name %>')">
-            <% Object.keys(categories).forEach(function(category) { %>
-              <option value="<%= category %>"><%= category %></option>
-            <% }) %>
-          </select>
-
-          <label for="item">Item:</label>
-          <select name="item" id="item-select-<%= member.name %>" required>
-            <% const firstCategory = Object.keys(categories)[0];
-               categories[firstCategory].forEach(function(item) { %>
-              <option value="<%= item %>"><%= item %></option>
-            <% }) %>
-          </select>
-
-          <input type="hidden" name="member" value="<%= member.name %>">
-          <input type="submit" value="Assign">
-        </form>
-      </li>
-    <% }) %>
-  </ul>
-
-  <!-- Add Category Form -->
-  <h3>Add Category:</h3>
-  <form action="/add-category" method="POST">
-    <label for="category">Category Name:</label>
-    <input type="text" name="category" required>
-    <input type="submit" value="Add Category">
-  </form>
 </body>
 </html>

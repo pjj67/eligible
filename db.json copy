@@ -1,6 +1,28 @@
 {
   "members": [
     {
+      "name": "Angry",
+      "attendance": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false
+      ],
+      "items": {
+        "Wand": [
+          "codex",
+          "tevent"
+        ],
+        "Staff": [
+          "Daigon"
+        ]
+      }
+    },
+    {
       "name": "Jane",
       "attendance": [
         true,
@@ -12,14 +34,21 @@
         false,
         true
       ],
-      "items": {}
+      "items": {
+        "Wand": [
+          "codex"
+        ],
+        "Daggers": [
+          "perless"
+        ]
+      }
     },
     {
       "name": "John",
       "attendance": [
         true,
         true,
-        false,
+        true,
         false,
         false,
         true,
@@ -27,29 +56,27 @@
         false
       ],
       "items": {
-        "Wand": []
+        "Wand": [],
+        "Staff": [
+          "Daigon"
+        ],
+        "Daggers": [
+          "perless"
+        ]
       }
-    },
-    {
-      "name": "Angry",
-      "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "items": {}
     }
   ],
   "categories": {
     "Staff": [
-      "Daigon"
+      "Daigon",
+      "greyeye"
     ],
-    "Wand": [],
-    "Daggers": []
+    "Wand": [
+      "codex",
+      "tevent"
+    ],
+    "Daggers": [
+      "perless"
+    ]
   }
 }

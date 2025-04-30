@@ -6,33 +6,19 @@
         true,
         true,
         true,
-        true,
-        true,
         false,
         false,
-        false
-      ],
-      "items": {
-        "Wand": [
-          "codex"
-        ]
-      }
-    },
-    {
-      "name": "Jane",
-      "attendance": [
-        true,
-        true,
-        true,
-        false,
-        true,
         false,
         false,
         true
       ],
       "items": {
         "Wand": [
-          "codex"
+          "codex",
+          "tevent"
+        ],
+        "Staff": [
+          "Daigon"
         ]
       }
     },
@@ -41,17 +27,20 @@
       "attendance": [
         true,
         true,
+        true,
         false,
         false,
         false,
         true,
-        false,
         false
       ],
       "items": {
         "Wand": [],
         "Staff": [
           "Daigon"
+        ],
+        "Daggers": [
+          "perless"
         ]
       }
     }

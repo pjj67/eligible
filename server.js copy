@@ -8,6 +8,9 @@ const file = path.join(__dirname, "db.json");
 const adapter = new FileSync(file);
 const db = low(adapter);
 
+// Ensure default structure
+db.defaults({ members: [], categories: {} }).write();
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
@@ -17,10 +20,15 @@ app.use(express.json());
 app.get("/", (req, res) => {
   const { members = [], categories = {} } = db.getState();
 
-  // Sort members alphabetically by name
   const sortedMembers = members.sort((a, b) => a.name.localeCompare(b.name));
 
-  res.render("index", { members: sortedMembers, categories });
+  res.render("index", {
+    members: sortedMembers,
+    categories,
+    selectedCategory: "", // 👈 Fix: Add this line
+    selectedItem: "",      // (optional) if you're also using `selectedItem`
+    eligibleMembers: []    // (optional) for eligibility list output
+  });
 });
 
 // --- Member Routes ---
@@ -29,10 +37,9 @@ app.post("/add-member", (req, res) => {
   db.get("members")
     .push({
       name,
-      attendance: Array(8).fill(false), // Set initial attendance to false for all events (8 events)
-      items: {} // This will track the items each member has
+      attendance: Array(8).fill(false),
+      items: {}
     })
-    .sortBy("name")
     .write();
   res.redirect("/");
 });
@@ -57,7 +64,7 @@ app.post("/remove-category", (req, res) => {
   const { category } = req.body;
   db.get("categories").unset(category).write();
   db.get("members").forEach(m => {
-    m.items[category] = undefined;
+    delete m.items[category];
   }).write();
   res.redirect("/");
 });
@@ -76,67 +83,90 @@ app.post("/remove-item", (req, res) => {
   const { category, item } = req.body;
   db.get("categories").get(category).remove(i => i === item).write();
   db.get("members").forEach(m => {
-    m.items[category] = m.items[category] ? m.items[category].filter(i => i !== item) : [];
+    if (m.items[category]) {
+      m.items[category] = m.items[category].filter(i => i !== item);
+    }
   }).write();
   res.redirect("/");
 });
 
-// --- Need List Assignment and Revocation ---
+// --- Need List ---
 app.post("/assign-need", (req, res) => {
   const { member, category, item } = req.body;
-  const m = db.get("members").find({ name: member }).value();
+  const memberRef = db.get("members").find({ name: member });
 
-  // Ensure the items property exists
+  const m = memberRef.value();
   if (!m.items[category]) {
     m.items[category] = [];
   }
-
-  // Assign the item if not already assigned
   if (!m.items[category].includes(item)) {
     m.items[category].push(item);
   }
-  
-  db.write();
+
+  memberRef.assign({ items: m.items }).write();
   res.redirect("/");
 });
 
 app.post("/revoke-need", (req, res) => {
   const { member, category, item } = req.body;
-  const m = db.get("members").find({ name: member }).value();
+  const memberRef = db.get("members").find({ name: member });
 
-  // If the member has the item, remove it
+  const m = memberRef.value();
   if (m.items[category]) {
     m.items[category] = m.items[category].filter(i => i !== item);
   }
 
-  db.write();
+  memberRef.assign({ items: m.items }).write();
   res.redirect("/");
 });
 
-// --- Attendance Update ---
+// --- Attendance ---
 app.post("/update-attendance", (req, res) => {
-  console.log("Attendance submission:", JSON.stringify(req.body, null, 2));
+  const attendanceUpdates = req.body.attendance || {};
+  const allMembers = db.get("members").value();
 
-  const updates = req.body.attendance || {}; // Get the submitted attendance data
-
-  const members = db.get("members").value(); // Get the current list of members from the database
-
-  const updatedMembers = members.map(member => {
+  const updatedMembers = allMembers.map(member => {
     const name = member.name;
-    const attendanceData = updates[name] || []; // Get attendance data for the member
+    const rawAttendance = attendanceUpdates[name] || [];
 
-    // Update attendance for each event (8 events in total)
-    const newAttendance = attendanceData.map(att => att === "true"); // Convert "true"/"false" to boolean
+    // Ensure all 8 entries are accounted for, defaulting to false
+    const newAttendance = Array(8).fill(false).map((_, i) => {
+      const val = rawAttendance[i];
+      return val === "true" || val === true || val === "on";
+    });
 
     return {
       ...member,
-      attendance: newAttendance // Update attendance
+      attendance: newAttendance
     };
   });
 
-  db.set("members", updatedMembers).write(); // Write updated members to the database
-  res.redirect("/"); // Redirect back to the dashboard
+  db.set("members", updatedMembers).write();
+  res.redirect("/");
 });
+
+app.post("/check-eligibility", (req, res) => {
+  const { category, item } = req.body;
+
+  const { members = [], categories = {} } = db.getState();
+
+  const eligibleMembers = members.filter(member => {
+  const attendanceCount = member.attendance.filter(a => a).length;
+  const hasItem = member.items[category] && member.items[category].includes(item);
+  return attendanceCount >= 4 && hasItem;
+});
+
+  const sortedMembers = members.sort((a, b) => a.name.localeCompare(b.name));
+
+  res.render("index", {
+    members: sortedMembers,
+    categories,
+    selectedCategory: category,
+    selectedItem: item,
+    eligibleMembers
+  });
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("App running on port", PORT));
