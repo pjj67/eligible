@@ -10,13 +10,13 @@
 
   <!-- Attendance Section -->
   <h2>Attendance:</h2>
-  <form action="/update-attendance" method="POST">
+  <form action="/update-attendance" method="POST" id="attendance-form">
     <% members.forEach(function(member) { %>
       <div style="margin-bottom: 1rem;">
         <strong><%= member.name %></strong><br>
         <% for (let i = 0; i < 8; i++) { %>
           <label>
-            Event <%= i + 1 %>
+            A <%= i + 1 %>
             <input
               type="checkbox"
               name="attendance[<%= member.name %>][<%= i %>]"
@@ -28,6 +28,23 @@
     <% }) %>
     <button type="submit">Update Attendance</button>
   </form>
+
+  <script>
+    // Before form submission, inject "false" for unchecked checkboxes
+    document.getElementById('attendance-form').addEventListener('submit', function(e) {
+      const form = e.target;
+      const checkboxes = form.querySelectorAll('input[type=checkbox]');
+      checkboxes.forEach(cb => {
+        if (!cb.checked) {
+          const hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = cb.name;
+          hidden.value = 'false';
+          form.appendChild(hidden);
+        }
+      });
+    });
+  </script>
 
   <!-- Add Member Form -->
   <h3>Add Member:</h3>

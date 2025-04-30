@@ -4,7 +4,13 @@
       "name": "Jane",
       "attendance": [
         true,
-        true
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false
       ],
       "items": {}
     },
@@ -12,12 +18,16 @@
       "name": "John",
       "attendance": [
         true,
-        true
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
       ],
       "items": {
-        "Wand": [
-          "Daigon"
-        ]
+        "Wand": []
       }
     }
   ],
