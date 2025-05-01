@@ -61,7 +61,12 @@
         true
       ],
       "items": {
-        "Greatsword": []
+        "Greatsword": [
+          "Tevent's warblade of despair"
+        ],
+        "Daggers": [
+          "Tevent's fangs of fury"
+        ]
       }
     },
     {
@@ -76,7 +81,38 @@
         true,
         true
       ],
-      "items": {}
+      "items": {
+        "Staff": [
+          "Daigon's charred Emberstaff"
+        ],
+        "Archboss Weap 1": [
+          "Tevent's fangs of fury"
+        ],
+        "Archboss Weap 2": [
+          "Queen bellandir's hivemind staff"
+        ],
+        "Chest": [
+          "Imperial seeker's tunic"
+        ],
+        "Feet": [
+          "Imperial seeker's boots"
+        ],
+        "Gloves": [
+          "Spectral overseer's handguards"
+        ],
+        "Cloak": [
+          "Cloak of the frozen expanse"
+        ],
+        "Necklace": [
+          "Noble birthright brooch"
+        ],
+        "Bracelet": [
+          "Infernal demonpact cuffs"
+        ],
+        "Ring 1": [
+          "Runed band of the black anvil"
+        ]
+      }
     },
     {
       "name": "Babi99",
@@ -90,7 +126,14 @@
         false,
         true
       ],
-      "items": {}
+      "items": {
+        "Staff": [
+          "Queen bellandir's hivemind staff"
+        ],
+        "Longbow": [
+          "Tevent's arc of wailing death"
+        ]
+      }
     },
     {
       "name": "BATEC",
