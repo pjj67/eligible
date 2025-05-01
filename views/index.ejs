@@ -30,137 +30,70 @@
       list-style-type: none;
       padding-left: 1em;
     }
-
-    /* Need List Section Styling */
+    
     .need-list {
-      display: flex;
-      flex-direction: column; /* Align members vertically */
-      gap: 2rem; /* Space between members */
-    }
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
 
-    .member-need-list {
-      border: 1px solid #ccc;
-      padding: 1rem;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-    }
+.member-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: #fefefe;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
 
-    .category-container {
-      display: flex;
-      gap: 1.5rem; /* Space between categories */
-      overflow-x: auto; /* Allow horizontal scrolling if categories overflow */
-    }
+.member-card h3 {
+  margin-top: 0;
+  color: #333;
+}
 
-    .category-column {
-      width: 200px; /* Fixed width for each category column */
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+.member-items {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1rem;
+}
 
-    .category-column h3 {
-      text-align: center;
-      margin-bottom: 0.5rem;
-      font-size: 1.1rem;
-      color: #333;
-    }
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #eee;
+}
 
-    .category-column ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
+.revoke-btn,
+.assign-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
 
-    .category-column li {
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-    }
+.revoke-btn:hover {
+  background-color: #c82333;
+}
 
-    .category-column form {
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-      display: inline-block;
-    }
+.assign-btn {
+  background-color: #007bff;
+  margin-top: 0.5rem;
+}
 
-    .category-column form input[type="submit"] {
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+.assign-btn:hover {
+  background-color: #0056b3;
+}
 
-    .category-column form input[type="submit"]:hover {
-      background-color: #c0392b;
-    }
+.assign-form select,
+.assign-form button {
+  margin-right: 0.5rem;
+  margin-top: 0.3rem;
+}
 
-    /* Styling for Assign Need Form */
-    form select {
-      margin: 0.5rem;
-      padding: 0.3rem;
-      font-size: 1rem;
-    }
-
-    form input[type="submit"] {
-      padding: 0.5rem 1rem;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    form input[type="submit"]:hover {
-      background-color: #45a049;
-    }
-
-    /* Existing styles you had */
-    /* Attendance Section Styling */
-    .member-attendance {
-      margin-bottom: 1.5rem; /* Spacing between members */
-      padding: 10px;
-      border: 1px solid #ccc; /* Border for each member's section */
-      border-radius: 8px;
-    }
-
-    .attendance-events {
-      display: flex;
-      flex-wrap: wrap; /* Allow labels to wrap */
-      gap: 15px; /* Add spacing between checkboxes */
-      margin-top: 10px; /* Space between the member's name and the checkboxes */
-    }
-
-    .attendance-label {
-      display: flex;
-      align-items: center;
-      margin-right: 10px; /* Space between checkboxes */
-      font-size: 14px;
-    }
-
-    .attendance-label input {
-      margin-left: 5px;
-      transform: scale(1.2); /* Slightly larger checkboxes */
-    }
-
-    .submit-btn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .submit-btn:hover {
-      background-color: #45a049;
-    }
-
-    /* Category Section Styling */
-    .category-column {
-      width: 200px;
-    }
   </style>
 </head>
 <body>
@@ -221,7 +154,52 @@
   </form>
 </details>
 
-  <!-- Category Section -->
+<style>
+  /* Attendance Section Styling */
+  .member-attendance {
+    margin-bottom: 1.5rem; /* Spacing between members */
+    padding: 10px;
+    border: 1px solid #ccc; /* Border for each member's section */
+    border-radius: 8px;
+  }
+
+  .attendance-events {
+    display: flex;
+    flex-wrap: wrap; /* Allow labels to wrap */
+    gap: 15px; /* Add spacing between checkboxes */
+    margin-top: 10px; /* Space between the member's name and the checkboxes */
+  }
+
+  .attendance-label {
+    display: flex;
+    align-items: center;
+    margin-right: 10px; /* Space between checkboxes */
+    font-size: 14px;
+  }
+
+  .attendance-label input {
+    margin-left: 5px;
+    transform: scale(1.2); /* Slightly larger checkboxes */
+  }
+
+  .submit-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .submit-btn:hover {
+    background-color: #45a049;
+  }
+</style>
+
+
+   <!-- Category Section -->
   <details>
     <summary>Categories</summary>
     <ul>
@@ -258,7 +236,7 @@
     </form>
   </details>
             
-  <!-- Members Section -->
+            <!-- Members Section -->
   <details>
     <summary>Add/Remove Members</summary>
     <h3>Add Member:</h3>
@@ -280,44 +258,39 @@
     </form>
   </details>
 
- <!-- Need List Section (Updated) -->
+ <!-- Need List Section (Not Collapsible) -->
 <h2>Need List:</h2>
 <div class="need-list">
   <% members.forEach(function(member) { %>
-    <div class="member-need-list">
-      <strong><%= member.name %></strong>
-      <div class="category-container">
+    <div class="member-card">
+      <h3><%= member.name %></h3>
+      <ul class="member-items">
         <% Object.keys(categories).forEach(function(category) { %>
           <% if (member.items[category]) { %>
-            <div class="category-column">
-              <h3><%= category %></h3>
-              <ul>
-                <% member.items[category].forEach(function(item) { %>
-                  <li>
-                    <%= item %>
-                    <form action="/revoke-need" method="POST">
-                      <input type="hidden" name="member" value="<%= member.name %>">
-                      <input type="hidden" name="category" value="<%= category %>">
-                      <input type="hidden" name="item" value="<%= item %>">
-                      <input type="submit" value="Revoke">
-                    </form>
-                  </li>
-                <% }) %>
-              </ul>
-            </div>
+            <% member.items[category].forEach(function(item) { %>
+              <li class="item-row">
+                <span><strong><%= category %>:</strong> <%= item %></span>
+                <form action="/revoke-need" method="POST">
+                  <input type="hidden" name="member" value="<%= member.name %>">
+                  <input type="hidden" name="category" value="<%= category %>">
+                  <input type="hidden" name="item" value="<%= item %>">
+                  <button type="submit" class="revoke-btn">Revoke</button>
+                </form>
+              </li>
+            <% }) %>
           <% } %>
         <% }) %>
-      </div>
+      </ul>
 
-      <form action="/assign-need" method="POST">
-        <label for="category">Category:</label>
+      <form action="/assign-need" method="POST" class="assign-form">
+        <label>Category:</label>
         <select name="category" required onchange="updateItemDropdown(this, '<%= member.name %>')">
           <% Object.keys(categories).forEach(function(category) { %>
             <option value="<%= category %>"><%= category %></option>
           <% }) %>
         </select>
 
-        <label for="item">Item:</label>
+        <label>Item:</label>
         <select name="item" id="item-select-<%= member.name %>" required>
           <% const firstCategory = Object.keys(categories)[0];
              categories[firstCategory].forEach(function(item) { %>
@@ -326,10 +299,41 @@
         </select>
 
         <input type="hidden" name="member" value="<%= member.name %>">
-        <input type="submit" value="Assign">
+        <button type="submit" class="assign-btn">Assign</button>
       </form>
     </div>
   <% }) %>
 </div>
+  </details>
+
+  <script>
+    document.getElementById('attendance-form').addEventListener('submit', function(e) {
+      const form = e.target;
+      const checkboxes = form.querySelectorAll('input[type=checkbox]');
+      checkboxes.forEach(cb => {
+        if (!cb.checked) {
+          const hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = cb.name;
+          hidden.value = 'false';
+          form.appendChild(hidden);
+        }
+      });
+    });
+
+    const categories = <%- JSON.stringify(categories) %>;
+
+    function updateItemDropdown(categorySelect, memberName) {
+      const category = categorySelect.value;
+      const itemSelect = document.getElementById(`item-select-${memberName}`);
+      itemSelect.innerHTML = '';
+      (categories[category] || []).forEach(item => {
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        itemSelect.appendChild(option);
+      });
+    }
+  </script>
 </body>
 </html>
