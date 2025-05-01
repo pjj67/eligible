@@ -60,7 +60,9 @@
         false,
         true
       ],
-      "items": {}
+      "items": {
+        "Greatsword": []
+      }
     },
     {
       "name": "Angrylittleman",

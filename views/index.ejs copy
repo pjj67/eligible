@@ -66,14 +66,15 @@
   <% } %>
 
   <!-- Attendance Section -->
-  <details>
-    <summary>Attendance</summary>
-    <form action="/update-attendance" method="POST" id="attendance-form">
-      <% members.forEach(function(member) { %>
-        <div style="margin-bottom: 1rem;">
-          <strong><%= member.name %></strong><br>
+<details>
+  <summary>Attendance</summary>
+  <form action="/update-attendance" method="POST" id="attendance-form">
+    <% members.forEach(function(member) { %>
+      <div class="member-attendance">
+        <strong><%= member.name %></strong>
+        <div class="attendance-events">
           <% for (let i = 0; i < 8; i++) { %>
-            <label>
+            <label class="attendance-label">
               Major Event <%= i + 1 %>
               <input
                 type="checkbox"
@@ -83,10 +84,56 @@
             </label>
           <% } %>
         </div>
-      <% }) %>
-      <button type="submit">Update Attendance</button>
-    </form>
-  </details>
+      </div>
+    <% }) %>
+    <button type="submit" class="submit-btn">Update Attendance</button>
+  </form>
+</details>
+
+<style>
+  /* Attendance Section Styling */
+  .member-attendance {
+    margin-bottom: 1.5rem; /* Spacing between members */
+    padding: 10px;
+    border: 1px solid #ccc; /* Border for each member's section */
+    border-radius: 8px;
+  }
+
+  .attendance-events {
+    display: flex;
+    flex-wrap: wrap; /* Allow labels to wrap */
+    gap: 15px; /* Add spacing between checkboxes */
+    margin-top: 10px; /* Space between the member's name and the checkboxes */
+  }
+
+  .attendance-label {
+    display: flex;
+    align-items: center;
+    margin-right: 10px; /* Space between checkboxes */
+    font-size: 14px;
+  }
+
+  .attendance-label input {
+    margin-left: 5px;
+    transform: scale(1.2); /* Slightly larger checkboxes */
+  }
+
+  .submit-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .submit-btn:hover {
+    background-color: #45a049;
+  }
+</style>
+
 
    <!-- Category Section -->
   <details>
