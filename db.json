@@ -147,7 +147,20 @@
         false,
         true
       ],
-      "items": {}
+      "items": {
+        "Crossbow": [
+          "Cordy's stormspore spike slingers"
+        ],
+        "Daggers": [
+          "Tevent's fangs of fury"
+        ],
+        "Legs": [
+          "Forgotten lotus pants"
+        ],
+        "Feet": [
+          "Imperial seeker's boots"
+        ]
+      }
     },
     {
       "name": "BigPoyaso",

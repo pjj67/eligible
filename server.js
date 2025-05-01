@@ -151,10 +151,15 @@ app.post("/check-eligibility", (req, res) => {
   const { members = [], categories = {} } = db.getState();
 
   const eligibleMembers = members.filter(member => {
-  const attendanceCount = member.attendance.filter(a => a).length;
-  const hasItem = member.items[category] && member.items[category].includes(item);
-  return attendanceCount >= 4 && hasItem;
-});
+    const attendanceCount = member.attendance.filter(a => a).length;
+
+    // Check all categories for the item, not just the selected one
+    const hasItem = Object.values(member.items || {}).some(itemList =>
+      itemList.includes(item)
+    );
+
+    return attendanceCount >= 4 && hasItem;
+  });
 
   const sortedMembers = members.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -166,6 +171,7 @@ app.post("/check-eligibility", (req, res) => {
     eligibleMembers
   });
 });
+
 
 
 const PORT = process.env.PORT || 3000;
