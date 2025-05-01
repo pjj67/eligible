@@ -1,27 +1,6 @@
 {
   "members": [
     {
-      "name": "Jane",
-      "attendance": [
-        true,
-        true,
-        true,
-        false,
-        true,
-        false,
-        false,
-        true
-      ],
-      "items": {
-        "Wand": [
-          "codex"
-        ],
-        "Daggers": [
-          "perless"
-        ]
-      }
-    },
-    {
       "name": "John",
       "attendance": [
         true,
