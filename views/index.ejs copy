@@ -30,6 +30,75 @@
       list-style-type: none;
       padding-left: 1em;
     }
+    
+    .need-list {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.member-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: #fefefe;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.member-card h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.member-items {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1rem;
+}
+    
+    .member-items li:nth-child(odd) {
+  background-color: #87bad4;
+}
+
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.revoke-btn,
+.assign-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.revoke-btn:hover {
+  background-color: #c82333;
+}
+
+.assign-btn {
+  background-color: #007bff;
+  margin-top: 0.5rem;
+}
+
+.assign-btn:hover {
+  background-color: #0056b3;
+}
+
+.assign-form select,
+.assign-form button {
+  margin-right: 0.5rem;
+  margin-top: 0.3rem;
+}
+
   </style>
 </head>
 <body>
@@ -196,21 +265,21 @@
 
  <!-- Need List Section (Not Collapsible) -->
 <h2>Need List:</h2>
-<ul>
+<div class="need-list">
   <% members.forEach(function(member) { %>
-    <li>
-      <strong><%= member.name %></strong>
-      <ul>
+    <div class="member-card">
+      <h3><%= member.name %></h3>
+      <ul class="member-items">
         <% Object.keys(categories).forEach(function(category) { %>
           <% if (member.items[category]) { %>
             <% member.items[category].forEach(function(item) { %>
-              <li>
-                <%= item %>
+              <li class="item-row">
+                <span><strong><%= category %>:</strong> <%= item %></span>
                 <form action="/revoke-need" method="POST">
                   <input type="hidden" name="member" value="<%= member.name %>">
                   <input type="hidden" name="category" value="<%= category %>">
                   <input type="hidden" name="item" value="<%= item %>">
-                  <input type="submit" value="Revoke">
+                  <button type="submit" class="revoke-btn">Revoke</button>
                 </form>
               </li>
             <% }) %>
@@ -218,15 +287,15 @@
         <% }) %>
       </ul>
 
-      <form action="/assign-need" method="POST">
-        <label for="category">Category:</label>
+      <form action="/assign-need" method="POST" class="assign-form">
+        <label>Category:</label>
         <select name="category" required onchange="updateItemDropdown(this, '<%= member.name %>')">
           <% Object.keys(categories).forEach(function(category) { %>
             <option value="<%= category %>"><%= category %></option>
           <% }) %>
         </select>
 
-        <label for="item">Item:</label>
+        <label>Item:</label>
         <select name="item" id="item-select-<%= member.name %>" required>
           <% const firstCategory = Object.keys(categories)[0];
              categories[firstCategory].forEach(function(item) { %>
@@ -235,11 +304,11 @@
         </select>
 
         <input type="hidden" name="member" value="<%= member.name %>">
-        <input type="submit" value="Assign">
+        <button type="submit" class="assign-btn">Assign</button>
       </form>
-    </li>
+    </div>
   <% }) %>
-</ul>
+</div>
   </details>
 
   <script>
