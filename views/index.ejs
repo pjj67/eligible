@@ -147,14 +147,14 @@
         <div class="attendance-events">
           <% for (let i = 0; i < 8; i++) { %>
             <label class="attendance-label">
-              Major Event <%= i + 1 %>
-              <input
-                type="checkbox"
-                name="attendance[<%= member.name %>][<%= i %>]"
-                value="true"
-                <%= member.attendance[i] ? "checked" : "" %>
-                disabled />
-            </label>
+  Major Event <%= i + 1 %>
+  <input
+    type="checkbox"
+    name="attendance[<%= member.name %>][<%= i %>]"
+    value="true"
+    <%= member.attendance[i] ? "checked" : "" %>
+    disabled />
+</label>
           <% } %>
         </div>
       </div>
@@ -186,10 +186,9 @@
     font-size: 14px;
   }
 
-  .attendance-label input {
-    margin-left: 5px;
-    transform: scale(1.2); /* Slightly larger checkboxes */
-  }
+  .attendance-label input:checked {
+  accent-color: #28a745; /* Green tint for modern browsers */
+}
 
   .submit-btn {
     margin-top: 20px;
