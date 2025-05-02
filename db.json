@@ -523,27 +523,17 @@
         "Chest": [
           "Auric vanguard's full plate"
         ],
-        "Legs": [
-          "Royal praetor's gaiters"
-        ],
-        "Feet": [
-          "Royal praetor's sabatons"
-        ],
-        "Gloves": [
-          "Eternal warlord's gauntlets"
-        ],
+        "Legs": [],
+        "Feet": [],
+        "Gloves": [],
         "Necklace": [
           "Noble birthright brooch"
         ],
         "Bracelet": [
-          "Bangle of the clearest night"
+          "Restraints of the glacial queen"
         ],
-        "Ring 1": [
-          "Honor's promise signet"
-        ],
-        "Belt": [
-          "Elusive nymph coil"
-        ]
+        "Ring 1": [],
+        "Belt": []
       }
     },
     {
@@ -982,9 +972,7 @@
         "Staff": [
           "Daigon's charred Emberstaff"
         ],
-        "Gloves": [
-          "Deep fathom grasp"
-        ],
+        "Gloves": [],
         "Bracelet": [
           "Restraints of the glacial queen"
         ],
@@ -1071,20 +1059,6 @@
           "Girdle of treant strength"
         ]
       }
-    },
-    {
-      "name": "Lhosna",
-      "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true
-      ],
-      "items": {}
     },
     {
       "name": "LukeyBoy",
@@ -1271,9 +1245,7 @@
         "Feet": [
           "Imperial seeker's boots"
         ],
-        "Gloves": [
-          "Spectral overseer's handguards"
-        ]
+        "Gloves": []
       }
     },
     {
@@ -1795,20 +1767,6 @@
           "Runed band of the black anvil"
         ]
       }
-    },
-    {
-      "name": "TwilightSkyee",
-      "attendance": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true
-      ],
-      "items": {}
     },
     {
       "name": "Volrathz",
