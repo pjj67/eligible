@@ -105,34 +105,37 @@
   <h1>Welcome to the Members Dashboard</h1>
 
   <h2>Eligibility Checker</h2>
-  <form action="/check-eligibility" method="POST">
-    <label>Category:</label>
-    <select name="category" required onchange="this.form.submit()">
-      <option value="">--Choose Category--</option>
-      <% Object.keys(categories).forEach(function(cat) { %>
-        <option value="<%= cat %>" <%= selectedCategory === cat ? "selected" : "" %>><%= cat %></option>
+<form action="/check-eligibility" method="POST">
+  <label>Category:</label>
+  <select name="category" required onchange="this.form.submit()">
+    <option value="">--Choose Category--</option>
+    <% Object.keys(categories).forEach(function(cat) { 
+         if (!["Ring 2", "Archboss Weap 1", "Archboss Weap 2"].includes(cat)) {
+           const displayName = cat === "Ring 1" ? "Ring" : cat;
+    %>
+      <option value="<%= cat %>" <%= selectedCategory === cat ? "selected" : "" %>><%= displayName %></option>
+    <% } }) %>
+  </select>
+
+  <% if (selectedCategory) { %>
+    <label>Item:</label>
+    <select name="item" required>
+      <% categories[selectedCategory].forEach(function(itm) { %>
+        <option value="<%= itm %>" <%= selectedItem === itm ? "selected" : "" %>><%= itm %></option>
       <% }) %>
     </select>
-
-    <% if (selectedCategory) { %>
-      <label>Item:</label>
-      <select name="item" required>
-        <% categories[selectedCategory].forEach(function(itm) { %>
-          <option value="<%= itm %>" <%= selectedItem === itm ? "selected" : "" %>><%= itm %></option>
-        <% }) %>
-      </select>
-      <button type="submit">Check</button>
-    <% } %>
-  </form>
-
-  <% if (eligibleMembers && selectedItem) { %>
-    <h3>Eligible Members for "<%= selectedItem %>":</h3>
-    <ul>
-      <% eligibleMembers.forEach(function(m) { %>
-        <li><%= m.name %></li>
-      <% }) %>
-    </ul>
+    <button type="submit">Check</button>
   <% } %>
+</form>
+
+<% if (eligibleMembers && selectedItem) { %>
+  <h3>Eligible Members for "<%= selectedItem %>":</h3>
+  <ul>
+    <% eligibleMembers.forEach(function(m) { %>
+      <li><%= m.name %></li>
+    <% }) %>
+  </ul>
+<% } %>
 
   <!-- Attendance Section -->
 <details>
