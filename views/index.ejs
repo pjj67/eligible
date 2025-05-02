@@ -146,14 +146,14 @@
         <strong><%= member.name %></strong>
         <div class="attendance-events">
           <% for (let i = 0; i < 8; i++) { %>
-            <label class="attendance-label">
-  Major Event <%= i + 1 %>
+           <label class="attendance-label">
   <input
     type="checkbox"
     name="attendance[<%= member.name %>][<%= i %>]"
     value="true"
     <%= member.attendance[i] ? "checked" : "" %>
     disabled />
+  <span>Major Event <%= i + 1 %></span>
 </label>
           <% } %>
         </div>
@@ -180,15 +180,22 @@
   }
 
   .attendance-label {
-    display: flex;
-    align-items: center;
-    margin-right: 10px; /* Space between checkboxes */
-    font-size: 14px;
-  }
-
-  .attendance-label input:checked {
-  accent-color: #28a745; /* Green tint for modern browsers */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
+
+.attendance-label input:checked + span {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+
 
   .submit-btn {
     margin-top: 20px;
@@ -209,27 +216,27 @@
 
   
  <!-- Need List Section (Not Collapsible) -->
-<h2>Need List:</h2>
-<div class="need-list">
-  <% members.forEach(function(member) { %>
-    <div class="member-card">
-      <h3><%= member.name %></h3>
-      <ul class="member-items">
-        <% Object.keys(categories).forEach(function(category) { %>
-          <% if (member.items[category]) { %>
-            <% member.items[category].forEach(function(item) { %>
-              <li class="item-row">
-                <span><strong><%= category %>:</strong> <%= item %></span>
-              </li>
-            <% }) %>
-          <% } %>
-        <% }) %>
-      </ul>
-    </div>
-  <% }) %>
-</div>
-
-  </details>
+<details>
+  <summary>Need List</summary>
+  <div class="need-list">
+    <% members.forEach(function(member) { %>
+      <div class="member-card">
+        <h3><%= member.name %></h3>
+        <ul class="member-items">
+          <% Object.keys(categories).forEach(function(category) { %>
+            <% if (member.items[category]) { %>
+              <% member.items[category].forEach(function(item) { %>
+                <li class="item-row">
+                  <span><strong><%= category %>:</strong> <%= item %></span>
+                </li>
+              <% }) %>
+            <% } %>
+          <% }) %>
+        </ul>
+      </div>
+    <% }) %>
+  </div>
+</details>
 
   <script>
     document.getElementById('attendance-form').addEventListener('submit', function(e) {
