@@ -82,33 +82,6 @@
         true
       ],
       "items": {
-        "Wand": [
-          "None"
-        ],
-        "Crossbow": [
-          "None"
-        ],
-        "Greatsword": [
-          "None"
-        ],
-        "Sword and Shield": [
-          "None"
-        ],
-        "Spear": [
-          "None"
-        ],
-        "Longbow": [
-          "None"
-        ],
-        "Legs": [
-          "None"
-        ],
-        "Ring 2": [
-          "None"
-        ],
-        "Belt": [
-          "None"
-        ],
         "Staff": [
           "Daigon's charred Emberstaff"
         ],
@@ -141,9 +114,6 @@
         ],
         "Ring 1": [
           "Runed band of the black anvil"
-        ],
-        "Head": [
-          "None"
         ]
       }
     },
@@ -210,9 +180,6 @@
         ],
         "Belt": [
           "Elusive nymph coil"
-        ],
-        "Chest": [
-          "None"
         ]
       }
     },
@@ -316,17 +283,8 @@
         "Ring 2": [
           "Ring of spirited desire"
         ],
-        "Wand": [
-          "None"
-        ],
-        "Staff": [
-          "None"
-        ],
         "Greatsword": [
           "Cordy's warblade of creeping doom"
-        ],
-        "Head": [
-          "None"
         ],
         "Chest": [
           "Imperial seeker's tunic"
@@ -334,14 +292,8 @@
         "Feet": [
           "Imperial seeker's boots"
         ],
-        "Cloak": [
-          "None"
-        ],
         "Belt": [
           "Undisputed champion's belt"
-        ],
-        "Ring 1": [
-          "None"
         ]
       }
     },
@@ -480,12 +432,6 @@
         ],
         "Gloves": [
           "Forgotten lotus gloves"
-        ],
-        "Necklace": [
-          "None"
-        ],
-        "Belt": [
-          "None"
         ]
       }
     },
@@ -597,9 +543,6 @@
         ],
         "Belt": [
           "Elusive nymph coil"
-        ],
-        "Sword and Shield": [
-          "None"
         ]
       }
     },
@@ -646,68 +589,17 @@
         true
       ],
       "items": {
-        "Wand": [
-          "None"
-        ],
-        "Staff": [
-          "None"
-        ],
-        "Crossbow": [
-          "None"
-        ],
-        "Greatsword": [
-          "None"
-        ],
-        "Sword and Shield": [
-          "None"
-        ],
-        "Daggers": [
-          "None"
-        ],
-        "Spear": [
-          "None"
-        ],
-        "Longbow": [
-          "None"
-        ],
-        "Archboss Weap 1": [
-          "None"
-        ],
-        "Archboss Weap 2": [
-          "None"
-        ],
         "Head": [
           "Imperial Seeker's Circlet"
         ],
         "Chest": [
           "Imperial seeker's tunic"
         ],
-        "Legs": [
-          "None"
-        ],
         "Feet": [
           "Imperial seeker's boots"
         ],
-        "Gloves": [
-          "None"
-        ],
-        "Cloak": [
-          "None"
-        ],
         "Necklace": [
           "Collar of nature's wrath"
-        ],
-        "Bracelet": [
-          "None"
-        ],
-        "Ring 1": [
-          "None"
-        ],
-        "Ring 2": [
-          "None"
-        ],
-        "Belt": [
-          "None"
         ]
       }
     },
@@ -915,23 +807,11 @@
         "Daggers": [
           "Tevent's fangs of fury"
         ],
-        "Greatsword": [
-          "None"
-        ],
         "Chest": [
           "Imperial seeker's tunic"
         ],
         "Feet": [
           "Imperial seeker's boots"
-        ],
-        "Necklace": [
-          "None"
-        ],
-        "Bracelet": [
-          "None"
-        ],
-        "Ring 1": [
-          "None"
         ]
       }
     },
@@ -1102,50 +982,11 @@
         "Staff": [
           "Daigon's charred Emberstaff"
         ],
-        "Crossbow": [
-          "None"
-        ],
-        "Greatsword": [
-          "None"
-        ],
-        "Sword and Shield": [
-          "None"
-        ],
-        "Daggers": [
-          "None"
-        ],
-        "Spear": [
-          "None"
-        ],
-        "Longbow": [
-          "None"
-        ],
-        "Head": [
-          "None"
-        ],
-        "Chest": [
-          "None"
-        ],
-        "Legs": [
-          "None"
-        ],
-        "Feet": [
-          "None"
-        ],
         "Gloves": [
           "Deep fathom grasp"
         ],
-        "Cloak": [
-          "None"
-        ],
-        "Necklace": [
-          "None"
-        ],
         "Bracelet": [
           "Restraints of the glacial queen"
-        ],
-        "Ring 1": [
-          "None"
         ],
         "Ring 2": [
           "Runed band of the black anvil"
@@ -1158,9 +999,6 @@
         ],
         "Archboss Weap 1": [
           "Tevent's grasp of withering"
-        ],
-        "Archboss Weap 2": [
-          "None"
         ]
       }
     },
@@ -1280,9 +1118,6 @@
         ],
         "Ring 1": [
           "Runed band of the black anvil"
-        ],
-        "Necklace": [
-          "None"
         ]
       }
     },
@@ -1438,12 +1273,6 @@
         ],
         "Gloves": [
           "Spectral overseer's handguards"
-        ],
-        "Legs": [
-          "None"
-        ],
-        "Longbow": [
-          "None"
         ]
       }
     },
@@ -1594,9 +1423,6 @@
         ],
         "Ring 2": [
           "Runed band of the black anvil"
-        ],
-        "Necklace": [
-          "None"
         ]
       }
     },
@@ -1736,53 +1562,17 @@
         "Longbow": [
           "Tevent's arc of wailing death"
         ],
-        "Wand": [
-          "None"
-        ],
         "Staff": [
           "Deluzhnoa's ancient petrified staff"
-        ],
-        "Crossbow": [
-          "None"
-        ],
-        "Greatsword": [
-          "None"
-        ],
-        "Sword and Shield": [
-          "None"
-        ],
-        "Daggers": [
-          "None"
-        ],
-        "Spear": [
-          "None"
-        ],
-        "Archboss Weap 1": [
-          "None"
-        ],
-        "Archboss Weap 2": [
-          "None"
         ],
         "Head": [
           "Imperial Seeker's Circlet"
         ],
-        "Chest": [
-          "None"
-        ],
-        "Legs": [
-          "None"
-        ],
         "Feet": [
           "Imperial seeker's boots"
         ],
-        "Gloves": [
-          "None"
-        ],
         "Cloak": [
           "Cloak of the frozen expanse"
-        ],
-        "Necklace": [
-          "None"
         ],
         "Bracelet": [
           "Bracelet of the violent undertow"
@@ -1955,9 +1745,6 @@
         ],
         "Ring 1": [
           "Runed band of the black anvil"
-        ],
-        "Legs": [
-          "None"
         ]
       }
     },
@@ -2056,9 +1843,6 @@
         ],
         "Belt": [
           "Hero's legacy warbelt"
-        ],
-        "Necklace": [
-          "None"
         ]
       }
     },
