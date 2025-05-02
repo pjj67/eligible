@@ -159,6 +159,24 @@
         ],
         "Feet": [
           "Imperial seeker's boots"
+        ],
+        "Gloves": [
+          "Forgotten lotus gloves"
+        ],
+        "Cloak": [
+          "Cloak of the frozen expanse"
+        ],
+        "Necklace": [
+          "Collar of nature's wrath"
+        ],
+        "Bracelet": [
+          "Bracelet of the violent undertow"
+        ],
+        "Ring 1": [
+          "Symbol of nature's advance"
+        ],
+        "Belt": [
+          "Elusive nymph coil"
         ]
       }
     },
