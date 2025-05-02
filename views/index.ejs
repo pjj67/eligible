@@ -102,7 +102,7 @@
   </style>
 </head>
 <body>
-  <h1>Welcome to the Members Dashboard</h1>
+  <h1>Angrylittleman's Eligibility Checker</h1>
 
   <h2>Eligibility Checker</h2>
 <form action="/check-eligibility" method="POST">
@@ -152,15 +152,16 @@
                 type="checkbox"
                 name="attendance[<%= member.name %>][<%= i %>]"
                 value="true"
-                <%= member.attendance[i] ? "checked" : "" %> />
+                <%= member.attendance[i] ? "checked" : "" %>
+                disabled />
             </label>
           <% } %>
         </div>
       </div>
     <% }) %>
-    <button type="submit" class="submit-btn">Update Attendance</button>
   </form>
 </details>
+
 
 <style>
   /* Attendance Section Styling */
@@ -207,65 +208,7 @@
 </style>
 
 
-   <!-- Category Section -->
-  <details>
-    <summary>Categories</summary>
-    <ul>
-      <% Object.keys(categories).forEach(function(category) { %>
-        <li>
-          <strong><%= category %></strong>:
-          <ul>
-            <% categories[category].forEach(function(item) { %>
-              <li>
-                <%= item %>
-                <form action="/remove-item" method="POST">
-                  <input type="hidden" name="category" value="<%= category %>">
-                  <input type="hidden" name="item" value="<%= item %>">
-                  <input type="submit" value="Remove Item">
-                </form>
-              </li>
-            <% }) %>
-          </ul>
-          <form action="/add-item" method="POST">
-            <input type="hidden" name="category" value="<%= category %>">
-            <label for="item">Add Item:</label>
-            <input type="text" name="item" required>
-            <input type="submit" value="Add Item">
-          </form>
-        </li>
-      <% }) %>
-    </ul>
-
-    <h3>Add Category:</h3>
-    <form action="/add-category" method="POST">
-      <label for="category">Category Name:</label>
-      <input type="text" name="category" required>
-      <input type="submit" value="Add Category">
-    </form>
-  </details>
-            
-            <!-- Members Section -->
-  <details>
-    <summary>Add/Remove Members</summary>
-    <h3>Add Member:</h3>
-    <form action="/add-member" method="POST">
-      <label for="name">Member Name:</label>
-      <input type="text" name="name" required>
-      <input type="submit" value="Add Member">
-    </form>
-
-    <h3>Remove Member:</h3>
-    <form action="/remove-member" method="POST">
-      <label for="name">Select Member:</label>
-      <select name="name" required>
-        <% members.forEach(function(member) { %>
-          <option value="<%= member.name %>"><%= member.name %></option>
-        <% }) %>
-      </select>
-      <input type="submit" value="Remove Member">
-    </form>
-  </details>
-
+  
  <!-- Need List Section (Not Collapsible) -->
 <h2>Need List:</h2>
 <div class="need-list">
@@ -278,40 +221,15 @@
             <% member.items[category].forEach(function(item) { %>
               <li class="item-row">
                 <span><strong><%= category %>:</strong> <%= item %></span>
-                <form action="/revoke-need" method="POST">
-                  <input type="hidden" name="member" value="<%= member.name %>">
-                  <input type="hidden" name="category" value="<%= category %>">
-                  <input type="hidden" name="item" value="<%= item %>">
-                  <button type="submit" class="revoke-btn">Revoke</button>
-                </form>
               </li>
             <% }) %>
           <% } %>
         <% }) %>
       </ul>
-
-      <form action="/assign-need" method="POST" class="assign-form">
-        <label>Category:</label>
-        <select name="category" required onchange="updateItemDropdown(this, '<%= member.name %>')">
-          <% Object.keys(categories).forEach(function(category) { %>
-            <option value="<%= category %>"><%= category %></option>
-          <% }) %>
-        </select>
-
-        <label>Item:</label>
-        <select name="item" id="item-select-<%= member.name %>" required>
-          <% const firstCategory = Object.keys(categories)[0];
-             categories[firstCategory].forEach(function(item) { %>
-            <option value="<%= item %>"><%= item %></option>
-          <% }) %>
-        </select>
-
-        <input type="hidden" name="member" value="<%= member.name %>">
-        <button type="submit" class="assign-btn">Assign</button>
-      </form>
     </div>
   <% }) %>
 </div>
+
   </details>
 
   <script>
