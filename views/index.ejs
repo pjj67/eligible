@@ -12,231 +12,251 @@
       border-radius: 8px;
       background: #f9f9f9;
     }
+
     summary {
       font-weight: bold;
       cursor: pointer;
       font-size: 1.1em;
     }
+
     summary:hover {
       color: #007BFF;
     }
+
     form {
       margin-top: 0.5em;
     }
+
     h2 {
       margin-top: 2em;
     }
+
     ul {
       list-style-type: none;
       padding-left: 1em;
     }
-    
+
     .need-list {
-  display: grid;
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
 
-.member-card {
-  border: 4px solid #181b1c;
-  border-radius: 10px;
-  padding: 1rem;
-  background-color: #fefefe;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
+    .member-card {
+      border: 4px solid #181b1c;
+      border-radius: 10px;
+      padding: 1rem;
+      background-color: #fefefe;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
 
-.member-card h3 {
-  margin-top: 0;
-  color: #333;
-}
+    .member-card h3 {
+      margin-top: 0;
+      color: #333;
+    }
 
-.member-items {
-  list-style: none;
-  padding-left: 0;
-  margin-bottom: 1rem;
-}
-    
+    .member-items {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 1rem;
+    }
+
     .member-items li:nth-child(odd) {
-  background-color: #87bad4;
-}
+      background-color: #87bad4;
+    }
 
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #eee;
+    }
 
-.item-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.3rem 0;
-  border-bottom: 1px solid #eee;
-}
+    .revoke-btn,
+    .assign-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
 
-.revoke-btn,
-.assign-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
+    .revoke-btn:hover {
+      background-color: #c82333;
+    }
 
-.revoke-btn:hover {
-  background-color: #c82333;
-}
+    .assign-btn {
+      background-color: #007bff;
+      margin-top: 0.5rem;
+    }
 
-.assign-btn {
-  background-color: #007bff;
-  margin-top: 0.5rem;
-}
+    .assign-btn:hover {
+      background-color: #0056b3;
+    }
 
-.assign-btn:hover {
-  background-color: #0056b3;
-}
+    .assign-form select,
+    .assign-form button {
+      margin-right: 0.5rem;
+      margin-top: 0.3rem;
+    }
 
-.assign-form select,
-.assign-form button {
-  margin-right: 0.5rem;
-  margin-top: 0.3rem;
-}
+    /* Attendance Section Styling */
+    .member-attendance {
+      margin-bottom: 1.5rem;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
 
+    .attendance-events {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .attendance-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .attendance-label input:checked + span {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .submit-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #2d4a22;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .submit-btn:hover {
+      background-color: #45a049;
+    }
+
+    #member-filter, #need-filter {
+      margin-bottom: 1em;
+      padding: 6px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
   <h1>Angrylittleman's Eligibility Checker</h1>
 
   <h2>Eligibility Checker</h2>
-<form action="/check-eligibility" method="POST">
-  <label>Category:</label>
-  <select name="category" required onchange="this.form.submit()">
-    <option value="">--Choose Category--</option>
-    <% Object.keys(categories).forEach(function(cat) { 
-         if (!["Ring 2", "Archboss Weap 1", "Archboss Weap 2"].includes(cat)) {
-           const displayName = cat === "Ring 1" ? "Ring" : cat;
-    %>
-      <option value="<%= cat %>" <%= selectedCategory === cat ? "selected" : "" %>><%= displayName %></option>
-    <% } }) %>
-  </select>
-
-  <% if (selectedCategory) { %>
-    <label>Item:</label>
-    <select name="item" required>
-      <% categories[selectedCategory].forEach(function(itm) { %>
-        <option value="<%= itm %>" <%= selectedItem === itm ? "selected" : "" %>><%= itm %></option>
-      <% }) %>
+  <form action="/check-eligibility" method="POST">
+    <label>Category:</label>
+    <select name="category" required onchange="this.form.submit()">
+      <option value="">--Choose Category--</option>
+      <% Object.keys(categories).forEach(function(cat) { 
+           if (!["Ring 2", "Archboss Weap 1", "Archboss Weap 2"].includes(cat)) {
+             const displayName = cat === "Ring 1" ? "Ring" : cat;
+      %>
+        <option value="<%= cat %>" <%= selectedCategory === cat ? "selected" : "" %>><%= displayName %></option>
+      <% } }) %>
     </select>
-    <button type="submit">Check</button>
-  <% } %>
-</form>
 
-<% if (eligibleMembers && selectedItem) { %>
-  <h3>Eligible Members for "<%= selectedItem %>":</h3>
-  <ul>
-    <% eligibleMembers.forEach(function(m) { %>
-      <li><%= m.name %></li>
-    <% }) %>
-  </ul>
-<% } %>
+    <% if (selectedCategory) { %>
+      <label>Item:</label>
+      <select name="item" required>
+        <% categories[selectedCategory].forEach(function(itm) { %>
+          <option value="<%= itm %>" <%= selectedItem === itm ? "selected" : "" %>><%= itm %></option>
+        <% }) %>
+      </select>
+      <button type="submit">Check</button>
+    <% } %>
+  </form>
+
+  <% if (eligibleMembers && selectedItem) { %>
+    <h3>Eligible Members for "<%= selectedItem %>":</h3>
+    <ul>
+      <% eligibleMembers.forEach(function(m) { %>
+        <li><%= m.name %></li>
+      <% }) %>
+    </ul>
+  <% } %>
 
   <!-- Attendance Section -->
-<details>
-  <summary>Attendance</summary>
-  <form action="/update-attendance" method="POST" id="attendance-form">
-    <% members.forEach(function(member) { %>
-      <div class="member-attendance">
-        <strong><%= member.name %></strong>
-        <div class="attendance-events">
-          <% for (let i = 0; i < 8; i++) { %>
-           <label class="attendance-label">
-  <input
-    type="checkbox"
-    name="attendance[<%= member.name %>][<%= i %>]"
-    value="true"
-    <%= member.attendance[i] ? "checked" : "" %>
-    disabled />
-  <span>Major Event <%= i + 1 %></span>
-</label>
-          <% } %>
-        </div>
-      </div>
-    <% }) %>
-  </form>
-</details>
+  <details>
+    <summary>Attendance</summary>
 
+    <label for="member-filter">Select Member:</label>
+    <select id="member-filter" onchange="filterMemberAttendance()">
+      <option value="">-- All Members --</option>
+      <% members.forEach(function(member) { %>
+        <option value="<%= member.name %>"><%= member.name %></option>
+      <% }) %>
+    </select>
 
-<style>
-  /* Attendance Section Styling */
-  .member-attendance {
-    margin-bottom: 1.5rem; /* Spacing between members */
-    padding: 10px;
-    border: 1px solid #ccc; /* Border for each member's section */
-    border-radius: 8px;
-  }
-
-  .attendance-events {
-    display: flex;
-    flex-wrap: wrap; /* Allow labels to wrap */
-    gap: 15px; /* Add spacing between checkboxes */
-    margin-top: 10px; /* Space between the member's name and the checkboxes */
-  }
-
-  .attendance-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.attendance-label input:checked + span {
-  background-color: #d4edda;
-  color: #155724;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-
-
-  .submit-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #2d4a22;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-
-  .submit-btn:hover {
-    background-color: #45a049;
-  }
-</style>
-
-
-  
- <!-- Need List Section (Not Collapsible) -->
-<details>
-  <summary>Need List</summary>
-  <div class="need-list">
-    <% members.forEach(function(member) { %>
-      <div class="member-card">
-        <h3><%= member.name %></h3>
-        <ul class="member-items">
-          <% Object.keys(categories).forEach(function(category) { %>
-            <% if (member.items[category]) { %>
-              <% member.items[category].forEach(function(item) { %>
-                <li class="item-row">
-                  <span><strong><%= category %>:</strong> <%= item %></span>
-                </li>
-              <% }) %>
+    <form action="/update-attendance" method="POST" id="attendance-form">
+      <% members.forEach(function(member) { %>
+        <div class="member-attendance" data-member="<%= member.name %>">
+          <strong><%= member.name %></strong>
+          <div class="attendance-events">
+            <% for (let i = 0; i < 8; i++) { %>
+              <label class="attendance-label">
+                <input
+                  type="checkbox"
+                  name="attendance[<%= member.name %>][<%= i %>]"
+                  value="true"
+                  <%= member.attendance[i] ? "checked" : "" %>
+                  disabled />
+                <span>Major Event <%= i + 1 %></span>
+              </label>
             <% } %>
-          <% }) %>
-        </ul>
-      </div>
-    <% }) %>
-  </div>
-</details>
+          </div>
+        </div>
+      <% }) %>
+    </form>
+  </details>
+
+  <!-- Need List Section -->
+  <details>
+    <summary>Need List</summary>
+
+    <label for="need-filter">Select Member:</label>
+    <select id="need-filter" onchange="filterNeedList()">
+      <option value="">-- All Members --</option>
+      <% members.forEach(function(member) { %>
+        <option value="<%= member.name %>"><%= member.name %></option>
+      <% }) %>
+    </select>
+
+    <div class="need-list">
+      <% members.forEach(function(member) { %>
+        <div class="member-card" data-member="<%= member.name %>">
+          <h3><%= member.name %></h3>
+          <ul class="member-items">
+            <% Object.keys(categories).forEach(function(category) { %>
+              <% if (member.items[category]) { %>
+                <% member.items[category].forEach(function(item) { %>
+                  <li class="item-row">
+                    <span><strong><%= category %>:</strong> <%= item %></span>
+                  </li>
+                <% }) %>
+              <% } %>
+            <% }) %>
+          </ul>
+        </div>
+      <% }) %>
+    </div>
+  </details>
 
   <script>
     document.getElementById('attendance-form').addEventListener('submit', function(e) {
@@ -252,6 +272,30 @@
         }
       });
     });
+
+    function filterMemberAttendance() {
+      const selected = document.getElementById('member-filter').value;
+      const allMembers = document.querySelectorAll('.member-attendance');
+      allMembers.forEach(div => {
+        if (!selected || div.dataset.member === selected) {
+          div.style.display = 'block';
+        } else {
+          div.style.display = 'none';
+        }
+      });
+    }
+
+    function filterNeedList() {
+      const selected = document.getElementById('need-filter').value;
+      const cards = document.querySelectorAll('.member-card');
+      cards.forEach(card => {
+        if (!selected || card.dataset.member === selected) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
 
     const categories = <%- JSON.stringify(categories) %>;
 
