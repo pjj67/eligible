@@ -191,6 +191,15 @@
       <% }) %>
     </ul>
   <% } %>
+    
+    <h2>View Member Details</h2>
+<label for="member-detail-filter">Select Member:</label>
+<select id="member-detail-filter" onchange="showMemberDetails()">
+  <option value="">-- Select Member --</option>
+  <% members.forEach(function(member) { %>
+    <option value="<%= member.name %>"><%= member.name %></option>
+  <% }) %>
+</select>
 
   <!-- Attendance Section -->
   <details>
@@ -310,6 +319,24 @@
         itemSelect.appendChild(option);
       });
     }
+    function showMemberDetails() {
+  const selected = document.getElementById('member-detail-filter').value;
+
+  // Expand Attendance and Need List sections
+  const attendanceDetails = document.querySelector('details:nth-of-type(1)');
+  const needListDetails = document.querySelector('details:nth-of-type(2)');
+
+  if (!attendanceDetails.open) attendanceDetails.open = true;
+  if (!needListDetails.open) needListDetails.open = true;
+
+  // Set filters
+  document.getElementById('member-filter').value = selected;
+  filterMemberAttendance();
+
+  document.getElementById('need-filter').value = selected;
+  filterNeedList();
+}
+
   </script>
 </body>
 </html>
