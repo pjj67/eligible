@@ -1,31 +1,24 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const fetch = require("node-fetch"); // Import fetch for HTTP requests
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
 
-const url = "https://cdn.glitch.com/expovoi/db.json"; // Glitch asset URL for db.json
+const file = path.join(__dirname, "db.json");
+const adapter = new FileSync(file);
+const db = low(adapter);
 
-// Helper function to fetch and parse the db.json data
-async function fetchDB() {
-  try {
-    const response = await fetch(url); // Fetch the file from the URL
-    const data = await response.json(); // Parse the JSON data
-    return data; // Return the data to use in the routes
-  } catch (error) {
-    console.error("Error fetching db.json:", error); // Handle any errors
-    return { members: [], categories: {} }; // Return default structure on error
-  }
-}
+// Ensure default structure
+db.defaults({ members: [], categories: {} }).write();
 
-// --- Ensure Default Structure ---
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  const { members = [], categories = {} } = await fetchDB();
+app.get("/", (req, res) => {
+  const { members = [], categories = {} } = db.getState();
 
   const sortedMembers = members.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -39,106 +32,141 @@ app.get("/", async (req, res) => {
 });
 
 // --- Member Routes ---
-app.post("/add-member", async (req, res) => {
+app.post("/add-member", (req, res) => {
   const { name } = req.body;
-  const db = await fetchDB(); // Fetch the current data
-  db.members.push({
-    name,
-    attendance: Array(8).fill(false),
-    items: {}
-  });
-  // You need a way to update the db.json after modifying it. For this, you'd likely need to POST back the changes to the URL or store it elsewhere.
+  db.get("members")
+    .push({
+      name,
+      attendance: Array(8).fill(false),
+      items: {}
+    })
+    .write();
   res.redirect("/");
 });
 
-app.post("/remove-member", async (req, res) => {
+app.post("/remove-member", (req, res) => {
   const { name } = req.body;
-  const db = await fetchDB();
-  const updatedMembers = db.members.filter(member => member.name !== name);
-  db.members = updatedMembers;
+  db.get("members").remove({ name }).write();
   res.redirect("/");
 });
 
 // --- Categories ---
-app.post("/add-category", async (req, res) => {
+app.post("/add-category", (req, res) => {
   const { category } = req.body;
-  const db = await fetchDB();
-  const categories = db.categories || {};
+  const categories = db.get("categories").value();
   if (!categories[category]) {
-    db.categories[category] = [];
+    db.get("categories").set(category, []).write();
   }
   res.redirect("/");
 });
 
-app.post("/remove-category", async (req, res) => {
+app.post("/remove-category", (req, res) => {
   const { category } = req.body;
-  const db = await fetchDB();
-  delete db.categories[category];
-  db.members.forEach(m => {
+  db.get("categories").unset(category).write();
+  db.get("members").forEach(m => {
     delete m.items[category];
-  });
+  }).write();
   res.redirect("/");
 });
 
 // --- Items ---
-app.post("/add-item", async (req, res) => {
+app.post("/add-item", (req, res) => {
   const { category, item } = req.body;
-  const db = await fetchDB();
-  const items = db.categories[category] || [];
+  const items = db.get("categories").get(category).value();
   if (!items.includes(item)) {
-    db.categories[category].push(item);
+    db.get("categories").get(category).push(item).write();
   }
   res.redirect("/");
 });
 
-app.post("/remove-item", async (req, res) => {
+app.post("/remove-item", (req, res) => {
   const { category, item } = req.body;
-  const db = await fetchDB();
-  const categoryItems = db.categories[category] || [];
-  db.categories[category] = categoryItems.filter(i => i !== item);
-  db.members.forEach(m => {
+  db.get("categories").get(category).remove(i => i === item).write();
+  db.get("members").forEach(m => {
     if (m.items[category]) {
       m.items[category] = m.items[category].filter(i => i !== item);
     }
-  });
+  }).write();
+  res.redirect("/");
+});
+
+// --- Need List ---
+app.post("/assign-need", (req, res) => {
+  const { member, category, item } = req.body;
+  const memberRef = db.get("members").find({ name: member });
+
+  const m = memberRef.value();
+  if (!m.items[category]) {
+    m.items[category] = [];
+  }
+  if (!m.items[category].includes(item)) {
+    m.items[category].push(item);
+  }
+
+  memberRef.assign({ items: m.items }).write();
+  res.redirect("/");
+});
+
+app.post("/revoke-need", (req, res) => {
+  const { member, category, item } = req.body;
+  const memberRef = db.get("members").find({ name: member });
+
+  const m = memberRef.value();
+  if (m.items[category]) {
+    m.items[category] = m.items[category].filter(i => i !== item);
+  }
+
+  memberRef.assign({ items: m.items }).write();
   res.redirect("/");
 });
 
 // --- Attendance ---
-app.post("/update-attendance", async (req, res) => {
+app.post("/update-attendance", (req, res) => {
   const attendanceUpdates = req.body.attendance || {};
-  const db = await fetchDB();
-  db.members.forEach(member => {
+  const allMembers = db.get("members").value();
+
+  const updatedMembers = allMembers.map(member => {
     const name = member.name;
     const rawAttendance = attendanceUpdates[name] || [];
-    member.attendance = Array(8).fill(false).map((_, i) => {
+
+    // Ensure all 8 entries are accounted for, defaulting to false
+    const newAttendance = Array(8).fill(false).map((_, i) => {
       const val = rawAttendance[i];
       return val === "true" || val === true || val === "on";
     });
+
+    return {
+      ...member,
+      attendance: newAttendance
+    };
   });
+
+  db.set("members", updatedMembers).write();
   res.redirect("/");
 });
 
-// --- Eligibility ---
-app.post("/check-eligibility", async (req, res) => {
+app.post("/check-eligibility", (req, res) => {
   const { category, item } = req.body;
-  const db = await fetchDB();
-  const eligibleMembers = db.members.filter(member => {
-    const attendanceCount = member.attendance.filter(a => a).length;
-    const hasItem = Object.values(member.items || {}).some(itemList =>
-      itemList.includes(item)
-    );
-    return attendanceCount >= 4 && hasItem;
-  });
+
+  const { members = [], categories = {} } = db.getState();
+
+  const eligibleMembers = members.filter(member => {
+  const attendanceCount = member.attendance.filter(a => a).length;
+  const hasItem = member.items[category] && member.items[category].includes(item);
+  return attendanceCount >= 4 && hasItem;
+});
+
+  const sortedMembers = members.sort((a, b) => a.name.localeCompare(b.name));
 
   res.render("index", {
-    members: db.members.sort((a, b) => a.name.localeCompare(b.name)),
-    categories: db.categories,
+    members: sortedMembers,
+    categories,
     selectedCategory: category,
     selectedItem: item,
     eligibleMembers
   });
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("App running on port", PORT));
