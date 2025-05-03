@@ -201,7 +201,7 @@
     
     <h2>View Member Details</h2>
 <label for="member-detail-filter">Select Member:</label>
-<select id="member-detail-filter" onchange="showMemberDetails()">
+<select class="member-select" id="member-detail-filter" onchange="showMemberDetails()">
   <option value="">-- Select Member --</option>
   <% members.forEach(function(member) { %>
     <option value="<%= member.name %>"><%= member.name %></option>
@@ -247,7 +247,7 @@
     <summary>Need List</summary>
 
     <label for="need-filter">Select Member:</label>
-    <select id="need-filter" onchange="filterNeedList()">
+    <select class="member-select" id="need-filter" onchange="filterNeedList()">
       <option value="">-- All Members --</option>
       <% members.forEach(function(member) { %>
         <option value="<%= member.name %>"><%= member.name %></option>
@@ -345,5 +345,35 @@
 }
 
   </script>
+                      
+                       
+    <script>
+  $(document).ready(function() {
+  function customMatcher(params, data) {
+    if ($.trim(params.term) === '') {
+      return data;
+    }
+
+    if (typeof data.text === 'undefined') {
+      return null;
+    }
+
+    // Match only if the text starts with the search term (case-insensitive)
+    if (data.text.toLowerCase().startsWith(params.term.toLowerCase())) {
+      return data;
+    }
+
+    return null;
+  }
+
+  $('.member-select').select2({
+    placeholder: "Select a member",
+    allowClear: true,
+    width: 'resolve',
+    matcher: customMatcher
+  });
+});
+
+</script>
 </body>
 </html>
