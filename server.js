@@ -31,12 +31,13 @@ app.get("/", async (req, res) => {
     const categories = data.categories || {};
     const rawEventDates = data.eventDates || [];
 
+    // Map eventDates to the proper format (dd/mm/yyyy)
     const eventDates = rawEventDates.map(formatDate);
 
     res.render("index", {
       members,
       categories,
-      eventDates,
+      eventDates, // Ensure eventDates is passed correctly
       selectedCategory: "",
       selectedItem: "",
       eligibleMembers: []
@@ -47,7 +48,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-
 // Eligibility checker (read-only logic)
 app.post("/check-eligibility", async (req, res) => {
   const { category, item } = req.body;
@@ -57,19 +57,26 @@ app.post("/check-eligibility", async (req, res) => {
     const data = await response.json();
 
     const members = data.members || [];
-    const categories = data.categories || {};
+    const categories = data.categories || [];
+    const rawEventDates = data.eventDates || [];
 
+    // Map eventDates to the proper format (dd/mm/yyyy)
+    const eventDates = rawEventDates.map(formatDate);
+
+    // Filter members who are eligible
     const eligibleMembers = members.filter(member => {
       const attendanceCount = member.attendance.filter(a => a).length;
       const hasItem = member.items[category] && member.items[category].includes(item);
       return attendanceCount >= 4 && hasItem;
     });
 
+    // Sort members alphabetically by name
     const sortedMembers = members.sort((a, b) => a.name.localeCompare(b.name));
 
     res.render("index", {
       members: sortedMembers,
       categories,
+      eventDates, // Ensure eventDates is passed correctly
       selectedCategory: category,
       selectedItem: item,
       eligibleMembers
