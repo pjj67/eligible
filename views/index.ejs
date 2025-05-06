@@ -42,6 +42,36 @@
       list-style-type: none;
       padding-left: 1em;
     }
+    
+      
+   .event-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 2px solid #181b1c;
+  border-radius: 10px;
+  background-color: #f8f8f8;
+}
+
+.event-date-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-date-row label {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.event-date-row input[type="date"] {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
 
     .need-list {
       display: grid;
@@ -199,6 +229,30 @@
     </ul>
   <% } %>
     
+    <h2>Major Event Dates</h2>
+<div class="event-dates">
+  <% for (let i = 0; i < eventDates.length; i++) { %>
+    <div class="event-date-row">
+      <label for="event-date-<%= i + 1 %>">Major Event <%= i + 1 %> Date:</label>
+      <span>
+        <% 
+          let eventDate = eventDates[i];
+          if (eventDate) {
+            // Format the date as dd/mm/yyyy
+            let dateObj = new Date(eventDate);
+            let day = String(dateObj.getDate()).padStart(2, '0');
+            let month = String(dateObj.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
+            let year = dateObj.getFullYear();
+            let formattedDate = `${day}/${month}/${year}`;
+            %>
+            <%= formattedDate %>
+          <% } else { %>
+            Not Set
+          <% } %>
+      </span>
+    </div>
+  <% } %>
+</div>
     
     <h2>View Member Details</h2>
 <label for="member-detail-filter">Select Member:</label>
