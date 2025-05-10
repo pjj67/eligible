@@ -281,6 +281,16 @@
     <% } %>
   </div>
 </div>
+          
+          <!-- Totals row -->
+  <div class="attendance-events" style="margin-top: 1rem;">
+    <% for (let i = 0; i < 8; i++) { %>
+      <div style="font-weight: bold;">
+        Total for Event <%= i + 1 %>: <span class="event-total" data-event-index="<%= i %>">0</span>
+      </div>
+    <% } %>
+  </div>
+</form>
 
     
     <h2>View Member Details</h2>
@@ -305,26 +315,29 @@
     </select>
 
     <form action="/update-attendance" method="POST" id="attendance-form">
-      <% members.forEach(function(member) { %>
-        <div class="member-attendance" data-member="<%= member.name %>">
-          <strong><%= member.name %></strong>
-          <div class="attendance-events">
-            <% for (let i = 0; i < 8; i++) { %>
-              <label class="attendance-label">
-                <input
-                  type="checkbox"
-                  name="attendance[<%= member.name %>][<%= i %>]"
-                  value="true"
-                  <%= member.attendance[i] ? "checked" : "" %>
-                  disabled />
-                <span>Major Event <%= i + 1 %></span>
-              </label>
-            <% } %>
-          </div>
-        </div>
-      <% }) %>
-    </form>
-  </details>
+  <% members.forEach(function(member) { %>
+    <div class="member-attendance" data-member="<%= member.name %>">
+      <strong><%= member.name %></strong>
+      <div class="attendance-events">
+        <% for (let i = 0; i < 8; i++) { %>
+          <label class="attendance-label">
+            <input
+              type="checkbox"
+              class="event-checkbox"
+              data-event-index="<%= i %>"
+              name="attendance[<%= member.name %>][<%= i %>]"
+              value="true"
+              <%= member.attendance[i] ? "checked" : "" %>
+              disabled />
+            <span>Major Event <%= i + 1 %></span>
+          </label>
+        <% } %>
+      </div>
+    </div>
+  <% }) %>
+
+  
+
 
   <!-- Need List Section -->
   <details>
@@ -372,6 +385,26 @@
         }
       });
     });
+    
+    function updateAttendanceTotals() {
+    const totals = Array(8).fill(0);
+
+    document.querySelectorAll('.event-checkbox:checked').forEach(cb => {
+      const index = parseInt(cb.dataset.eventIndex);
+      if (!isNaN(index)) {
+        totals[index]++;
+      }
+    });
+
+    totals.forEach((count, i) => {
+      const totalSpan = document.querySelector(`.event-total[data-event-index="${i}"]`);
+      if (totalSpan) {
+        totalSpan.textContent = count;
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', updateAttendanceTotals);
 
     function filterMemberAttendance() {
       const selected = document.getElementById('member-filter').value;
