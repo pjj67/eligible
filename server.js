@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const fetch = require("node-fetch"); // Only needed for Node < 18
 
-const SOURCE_URL = "https://expovoi.glitch.me/db.json"; // ✅ Replace with your actual Glitch project URL
+const SOURCE_URL = "https://expovoi.onrender.com/db.json"; // ✅ Replace with your actual Glitch project URL
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
