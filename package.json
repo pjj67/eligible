@@ -20,3 +20,6 @@
   "author": "",
   "license": "ISC"
 }
+"scripts": {
+  "build": "react-scripts build" // or your framework's equivalent
+}
