@@ -4,6 +4,7 @@
   "description": "A system for tracking attendance, categories, items, and eligibility.",
   "main": "server.js",
   "scripts": {
+    "build": "react-scripts build" // or your framework's equivalent
     "start": "node server.js"
   },
   "dependencies": {
@@ -19,7 +20,4 @@
   },
   "author": "",
   "license": "ISC"
-}
-"scripts": {
-  "build": "react-scripts build" // or your framework's equivalent
 }
