@@ -4,7 +4,7 @@
   "description": "A system for tracking attendance, categories, items, and eligibility.",
   "main": "server.js",
   "scripts": {
-    "build": "react-scripts build"
+    "build": "react-scripts build",
     "start": "node server.js"
   },
   "dependencies": {
